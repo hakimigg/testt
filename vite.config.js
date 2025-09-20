@@ -9,5 +9,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  base: '/testt/',
+  base: process.env.NODE_ENV === 'production' ? '/testt/' : '/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+  },
 })
