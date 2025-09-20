@@ -9,7 +9,7 @@ import WishlistPage from './pages/WishlistPage'
 
 function App() {
   return (
-    <Router basename="/product-plaza">
+    <Router basename="/testt">
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />
