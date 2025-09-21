@@ -32,38 +32,82 @@ export default function AddProductPage() {
 
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-slate-800 text-center mb-8">Add a New Product</h1>
-      <form onSubmit={handleSubmit} className="space-y-4 bg-white p-8 border rounded-lg shadow-sm">
+    <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="text-center mb-12">
+        <h1 className="text-5xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-4">Add a New Product</h1>
+        <p className="text-lg text-slate-600">Share your amazing product with the world</p>
+      </div>
+      
+      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-10 border border-slate-200 rounded-2xl shadow-xl">
         <div>
-          <label className="font-medium">Product Name</label>
-          <Input value={product.name} onChange={e => setProduct({ ...product, name: e.target.value })} required />
+          <label className="block text-sm font-semibold text-slate-700 mb-2">Product Name</label>
+          <Input 
+            value={product.name} 
+            onChange={e => setProduct({ ...product, name: e.target.value })} 
+            required 
+            className="w-full p-4 border border-slate-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+            placeholder="Enter product name"
+          />
         </div>
+        
         <div>
-          <label className="font-medium">Description</label>
-          <Textarea value={product.description} onChange={e => setProduct({ ...product, description: e.target.value })} />
+          <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
+          <Textarea 
+            value={product.description} 
+            onChange={e => setProduct({ ...product, description: e.target.value })} 
+            className="w-full p-4 border border-slate-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 min-h-[120px]"
+            placeholder="Describe your product"
+          />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="font-medium">Company</label>
-            <select value={product.company} onChange={e => setProduct({ ...product, company: e.target.value })} className="w-full p-2 border rounded-md">
-              <option value="c1">c1</option>
-              <option value="c2">c2</option>
-              <option value="c3">c3</option>
-              <option value="c4">c4</option>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Company</label>
+            <select 
+              value={product.company} 
+              onChange={e => setProduct({ ...product, company: e.target.value })} 
+              className="w-full p-4 border border-slate-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-white"
+            >
+              <option value="c1">C1</option>
+              <option value="c2">C2</option>
+              <option value="c3">C3</option>
+              <option value="c4">C4</option>
             </select>
           </div>
           <div>
-            <label className="font-medium">Price</label>
-            <Input type="number" value={product.price} onChange={e => setProduct({ ...product, price: e.target.value })} required />
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Price ($)</label>
+            <Input 
+              type="number" 
+              value={product.price} 
+              onChange={e => setProduct({ ...product, price: e.target.value })} 
+              required 
+              className="w-full p-4 border border-slate-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+            />
           </div>
         </div>
+        
         <div>
-          <label className="font-medium">Stock</label>
-          <Input type="number" value={product.stock} onChange={e => setProduct({ ...product, stock: e.target.value })} required />
+          <label className="block text-sm font-semibold text-slate-700 mb-2">Stock Quantity</label>
+          <Input 
+            type="number" 
+            value={product.stock} 
+            onChange={e => setProduct({ ...product, stock: e.target.value })} 
+            required 
+            className="w-full p-4 border border-slate-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+            placeholder="0"
+            min="0"
+          />
         </div>
-        <Button type="submit" disabled={isSubmitting} className="w-full bg-blue-600 hover:bg-blue-700">
-          {isSubmitting ? "Submitting..." : "Add Product"}
+        
+        <Button 
+          type="submit" 
+          disabled={isSubmitting} 
+          className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-lg"
+        >
+          {isSubmitting ? "Creating Product..." : "Add Product"}
         </Button>
       </form>
     </div>

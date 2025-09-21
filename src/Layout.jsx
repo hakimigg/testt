@@ -1,7 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "./utils";
-import { Store, Home, ShoppingBag, PlusCircle, Heart } from "lucide-react";
 
 
 export default function Layout({ children }) {
@@ -9,10 +8,10 @@ export default function Layout({ children }) {
 
 
   const navigation = [
-    { name: "Home", url: createPageUrl("Home"), icon: Home },
-    { name: "Products", url: createPageUrl("Products"), icon: ShoppingBag },
-    { name: "Add Product", url: createPageUrl("AddProduct"), icon: PlusCircle },
-    { name: "Wishlist", url: createPageUrl("Wishlist"), icon: Heart }
+    { name: "Home", url: createPageUrl("Home") },
+    { name: "Products", url: createPageUrl("Products") },
+    { name: "Add Product", url: createPageUrl("AddProduct") },
+    { name: "Wishlist", url: createPageUrl("Wishlist") }
   ];
 
 
@@ -22,11 +21,11 @@ export default function Layout({ children }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link to={createPageUrl("Home")} className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
-                <Store className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-md">
+                <span className="text-white font-bold text-lg">PP</span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-800">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
                   Product Plaza
                 </h1>
               </div>
@@ -40,13 +39,12 @@ export default function Layout({ children }) {
                   <Link
                     key={item.name}
                     to={item.url}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-2 ${
+                    className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'text-slate-600 hover:text-blue-600 hover:bg-blue-50'
+                        ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg transform scale-105'
+                        : 'text-slate-600 hover:text-blue-600 hover:bg-blue-50 hover:shadow-md'
                     }`}
                   >
-                    <item.icon className="w-4 h-4" />
                     <span>{item.name}</span>
                   </Link>
                 );
@@ -60,20 +58,26 @@ export default function Layout({ children }) {
       <main>{children}</main>
 
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-t border-slate-200">
-        <div className="flex justify-around py-2">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-t border-slate-200 shadow-lg">
+        <div className="flex justify-around py-3">
           {navigation.map((item) => {
             const isActive = location.pathname.startsWith(item.url);
             return (
               <Link
                 key={item.name}
                 to={item.url}
-                className={`flex flex-col items-center py-2 px-3 rounded-lg ${
-                  isActive ? 'text-blue-600' : 'text-slate-500'
+                className={`flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 ${
+                  isActive 
+                    ? 'text-blue-600 bg-blue-50 shadow-md transform scale-105' 
+                    : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50'
                 }`}
               >
-                <item.icon className="w-5 h-5" />
-                <span className="text-xs mt-1 font-medium">{item.name}</span>
+                <div className={`w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold mb-1 ${
+                  isActive ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
+                }`}>
+                  {item.name.charAt(0)}
+                </div>
+                <span className="text-xs font-medium">{item.name}</span>
               </Link>
             );
           })}
