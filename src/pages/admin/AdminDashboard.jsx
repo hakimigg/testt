@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Product } from "../../entities/all";
+import { supabaseHelpers } from "../../lib/supabase";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../../utils";
 
@@ -14,7 +14,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function loadStats() {
       try {
-        const products = await Product.list('-created_date', 100);
+        const products = await supabaseHelpers.getProducts();
         const companies = [...new Set(products.map(p => p.company))];
         const recentProducts = products.slice(0, 5);
         
@@ -23,6 +23,8 @@ export default function AdminDashboard() {
           totalCompanies: companies.length,
           recentProducts
         });
+      } catch (error) {
+        console.error('Error loading stats:', error);
       } finally {
         setIsLoading(false);
       }

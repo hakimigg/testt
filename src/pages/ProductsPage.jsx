@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Product } from "../entities/all";
+import { supabaseHelpers } from "../lib/supabase";
 import ProductCard from "../components/shared/ProductCard";
 import { useLocation } from "react-router-dom";
 
@@ -26,8 +26,10 @@ export default function ProductsPage() {
   useEffect(() => {
     async function loadProducts() {
       try {
-        const fetchedProducts = await Product.list('-created_date', 100);
+        const fetchedProducts = await supabaseHelpers.getProducts();
         setProducts(fetchedProducts);
+      } catch (error) {
+        console.error('Error loading products:', error);
       } finally {
         setIsLoading(false);
       }

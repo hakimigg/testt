@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Product, User } from "../../entities/all";
+import { supabaseHelpers } from "../../lib/supabase";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "../../utils";
 import { Button } from "../../components/ui/button";
@@ -14,15 +14,13 @@ export default function AdminAddProduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await User.me();
-    } catch (err) {
-      await User.loginWithRedirect(window.location.href);
-      return;
-    }
     setIsSubmitting(true);
     try {
-      const newProduct = await Product.create({ ...product, price: Number(product.price), stock: Number(product.stock) });
+      const newProduct = await supabaseHelpers.createProduct({ 
+        ...product, 
+        price: Number(product.price), 
+        stock: Number(product.stock) 
+      });
       setSuccessMessage(`Product "${newProduct.name}" created successfully!`);
       setProduct({ name: "", description: "", company: "c1", price: 0, stock: 0 });
       
@@ -32,6 +30,7 @@ export default function AdminAddProduct() {
       }, 2000);
     } catch (error) {
       console.error("Error creating product:", error);
+      alert("Error creating product. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

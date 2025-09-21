@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Product } from "../../entities/all";
+import { supabaseHelpers } from "../../lib/supabase";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../../utils";
 
@@ -11,8 +11,10 @@ export default function AdminProducts() {
   useEffect(() => {
     async function loadProducts() {
       try {
-        const fetchedProducts = await Product.list('-created_date', 100);
+        const fetchedProducts = await supabaseHelpers.getProducts();
         setProducts(fetchedProducts);
+      } catch (error) {
+        console.error('Error loading products:', error);
       } finally {
         setIsLoading(false);
       }
@@ -28,7 +30,7 @@ export default function AdminProducts() {
   const handleDelete = async (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        await Product.delete(productId);
+        await supabaseHelpers.deleteProduct(productId);
         setProducts(products.filter(p => p.id !== productId));
       } catch (error) {
         console.error("Error deleting product:", error);

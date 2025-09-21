@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Product, User, UserWishlist } from "../entities/all";
+import { supabaseHelpers } from "../lib/supabase";
 import { Button } from "../components/ui/button";
 
 
@@ -16,7 +16,8 @@ export default function ProductDetailPage() {
   useEffect(() => {
     async function loadUser() {
       try {
-        setUser(await User.me());
+        const currentUser = await supabaseHelpers.getCurrentUser();
+        setUser(currentUser);
       } catch (e) { /* not logged in */ }
     }
     loadUser();
@@ -27,10 +28,10 @@ export default function ProductDetailPage() {
     async function loadProduct() {
       if (!id) return;
       try {
-        const results = await Product.filter({ id: id }, '', 1);
-        if (results.length > 0) {
-          setProduct(results[0]);
-        }
+        const productData = await supabaseHelpers.getProduct(id);
+        setProduct(productData);
+      } catch (error) {
+        console.error('Error loading product:', error);
       } finally {
         setIsLoading(false);
       }
@@ -42,8 +43,12 @@ export default function ProductDetailPage() {
   useEffect(() => {
     async function checkWishlist() {
       if (user && product) {
-        const wishlistItem = await UserWishlist.filter({ user_email: user.email, product_id: product.id });
-        setIsWishlisted(wishlistItem.length > 0);
+        try {
+          const wishlistItems = await supabaseHelpers.getWishlist(user.id);
+          setIsWishlisted(wishlistItems.some(item => item.product_id === product.id));
+        } catch (error) {
+          console.error('Error checking wishlist:', error);
+        }
       }
     }
     checkWishlist();
@@ -52,16 +57,21 @@ export default function ProductDetailPage() {
 
   const handleWishlistToggle = async () => {
     if (!user) {
-      await User.loginWithRedirect(window.location.href);
+      // For now, just alert - you can implement proper auth later
+      alert('Please sign in to add items to your wishlist');
       return;
     }
-    if (isWishlisted) {
-      const items = await UserWishlist.filter({ user_email: user.email, product_id: product.id });
-      if (items.length > 0) await UserWishlist.delete(items[0].id);
-      setIsWishlisted(false);
-    } else {
-      await UserWishlist.create({ user_email: user.email, product_id: product.id });
-      setIsWishlisted(true);
+    try {
+      if (isWishlisted) {
+        await supabaseHelpers.removeFromWishlist(user.id, product.id);
+        setIsWishlisted(false);
+      } else {
+        await supabaseHelpers.addToWishlist(user.id, product.id);
+        setIsWishlisted(true);
+      }
+    } catch (error) {
+      console.error('Error updating wishlist:', error);
+      alert('Error updating wishlist. Please try again.');
     }
   };
 
