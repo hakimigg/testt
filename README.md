@@ -6,10 +6,11 @@ A modern React-based e-commerce platform for browsing and managing products.
 
 - 🏠 **Homepage** - Welcome page with featured products and company navigation
 - 🛍️ **Products Page** - Browse all products with company filtering
-- 📱 **Product Details** - Detailed product information with wishlist functionality
-- ➕ **Add Product** - Create new products (requires authentication)
-- ❤️ **Wishlist** - Save favorite products for later
+- 📱 **Product Details** - Detailed product information with photo gallery
+- ➕ **Add Product** - Create new products with photo upload functionality
+- 📸 **Photo Upload** - Drag & drop photo upload with mobile camera support
 - 📱 **Responsive Design** - Works on desktop and mobile devices
+- 🖼️ **Photo Gallery** - View multiple product photos with navigation
 
 ## Tech Stack
 
@@ -65,8 +66,10 @@ src/
 │   ├── HomePage.jsx
 │   ├── ProductsPage.jsx
 │   ├── ProductDetailPage.jsx
-│   ├── AddProductPage.jsx
-│   └── WishlistPage.jsx
+│   └── admin/           # Admin pages
+│       ├── AdminDashboard.jsx
+│       ├── AdminAddProduct.jsx
+│       └── AdminProducts.jsx
 ├── entities/            # Data layer and API mocks
 ├── utils.js             # Utility functions
 ├── Layout.jsx           # Main layout component
@@ -78,28 +81,33 @@ src/
 
 ### Product Management
 - Browse products by company (c1, c2, c3, c4)
-- View detailed product information
-- Add new products with form validation
-- Mock data with realistic product examples
+- View detailed product information with photo galleries
+- Add new products with drag & drop photo upload
+- Support for multiple photos per product (up to 5)
+- Photo preview and management
 
-### User Features
-- Wishlist functionality
-- User authentication simulation
-- Responsive navigation
-- Mobile-friendly bottom navigation
+### Photo Upload Features
+- **Drag & Drop**: Drag photos directly into the upload area
+- **Browse Files**: Click to select photos from your device
+- **Mobile Support**: Camera access and gallery selection on mobile
+- **File Validation**: Automatic validation for file type and size
+- **Preview**: Real-time photo previews with removal options
+- **Multiple Formats**: Supports JPEG, PNG, WebP, and GIF
 
-### UI/UX
+### User Interface
 - Modern design with Tailwind CSS
 - Loading states and animations
 - Hover effects and transitions
+- Responsive navigation
+- Mobile-friendly bottom navigation
 - Glassmorphism navigation bar
 
 ## Demo Data
 
-The application includes mock data for demonstration:
-- 6 sample products across different companies
-- Mock user authentication
-- Sample wishlist items
+The application includes sample data for demonstration:
+- Sample products across different companies
+- Photo upload and display functionality
+- Admin product management interface
 
 ## Deployment
 

@@ -1,6 +1,5 @@
 -- Enable Row Level Security
 ALTER TABLE IF EXISTS public.products ENABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS public.wishlist ENABLE ROW LEVEL SECURITY;
 
 -- Create products table
 CREATE TABLE IF NOT EXISTS public.products (
@@ -10,26 +9,16 @@ CREATE TABLE IF NOT EXISTS public.products (
     company VARCHAR(100) NOT NULL,
     price DECIMAL(10,2) NOT NULL DEFAULT 0,
     stock INTEGER NOT NULL DEFAULT 0,
+    photos TEXT[], -- Array of base64 encoded images or URLs
     tags TEXT[],
     specs JSONB,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- Create wishlist table
-CREATE TABLE IF NOT EXISTS public.wishlist (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    product_id UUID REFERENCES public.products(id) ON DELETE CASCADE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
-    UNIQUE(user_id, product_id)
-);
-
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_products_company ON public.products(company);
 CREATE INDEX IF NOT EXISTS idx_products_created_at ON public.products(created_at);
-CREATE INDEX IF NOT EXISTS idx_wishlist_user_id ON public.wishlist(user_id);
-CREATE INDEX IF NOT EXISTS idx_wishlist_product_id ON public.wishlist(product_id);
 
 -- Row Level Security Policies
 
@@ -45,16 +34,6 @@ CREATE POLICY "Allow authenticated users to update products" ON public.products
 
 CREATE POLICY "Allow authenticated users to delete products" ON public.products
     FOR DELETE USING (auth.role() = 'authenticated');
-
--- Wishlist policies (users can only access their own wishlist)
-CREATE POLICY "Users can view their own wishlist" ON public.wishlist
-    FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert into their own wishlist" ON public.wishlist
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can delete from their own wishlist" ON public.wishlist
-    FOR DELETE USING (auth.uid() = user_id);
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()

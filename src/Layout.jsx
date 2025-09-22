@@ -9,8 +9,7 @@ export default function Layout({ children }) {
 
   const navigation = [
     { name: "Home", url: createPageUrl("Home") },
-    { name: "Products", url: createPageUrl("Products") },
-    { name: "Wishlist", url: createPageUrl("Wishlist") }
+    { name: "Products", url: createPageUrl("Products") }
   ];
 
 

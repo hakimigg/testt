@@ -5,10 +5,12 @@ import { createPageUrl } from "../../utils";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Textarea } from "../../components/ui/textarea";
+import PhotoUpload from "../../components/ui/PhotoUpload";
 
 export default function AdminAddProduct() {
   const navigate = useNavigate();
   const [product, setProduct] = useState({ name: "", description: "", company: "c1", price: 0, stock: 0 });
+  const [photos, setPhotos] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -16,13 +18,18 @@ export default function AdminAddProduct() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      // Convert photos to base64 strings for storage
+      const photoUrls = photos.map(photo => photo.preview);
+      
       const newProduct = await supabaseHelpers.createProduct({ 
         ...product, 
         price: Number(product.price), 
-        stock: Number(product.stock) 
+        stock: Number(product.stock),
+        photos: photoUrls // Store photo data as JSON array
       });
       setSuccessMessage(`Product "${newProduct.name}" created successfully!`);
       setProduct({ name: "", description: "", company: "c1", price: 0, stock: 0 });
+      setPhotos([]);
       
       // Auto-redirect to dashboard after 2 seconds
       setTimeout(() => {
@@ -53,6 +60,17 @@ export default function AdminAddProduct() {
       )}
       
       <form onSubmit={handleSubmit} className="bg-white rounded-xl p-8 shadow-lg border border-slate-200">
+        {/* Photo Upload Section */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-slate-700 mb-4">Product Photos</h3>
+          <PhotoUpload 
+            onPhotosChange={setPhotos}
+            maxFiles={5}
+            maxSizeInMB={5}
+            existingPhotos={photos}
+          />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column */}
           <div className="space-y-6">
@@ -125,10 +143,21 @@ export default function AdminAddProduct() {
             <div className="bg-slate-50 rounded-xl p-4">
               <h3 className="font-semibold text-slate-700 mb-3">Product Preview</h3>
               <div className="bg-white rounded-lg p-4 border border-slate-200">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center mb-3">
-                  <span className="text-white font-bold">
-                    {product.name ? product.name.charAt(0).toUpperCase() : "P"}
-                  </span>
+                {/* Product Image or Placeholder */}
+                <div className="mb-3">
+                  {photos.length > 0 ? (
+                    <img 
+                      src={photos[0].preview} 
+                      alt="Product preview"
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                  ) : (
+                    <div className="w-full h-32 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
+                      <span className="text-white font-bold text-2xl">
+                        {product.name ? product.name.charAt(0).toUpperCase() : "P"}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <h4 className="font-bold text-slate-800">{product.name || "Product Name"}</h4>
                 <p className="text-sm text-slate-600 mt-1">{product.description || "Product description"}</p>
@@ -140,6 +169,11 @@ export default function AdminAddProduct() {
                     ${product.price || "0.00"}
                   </span>
                 </div>
+                {photos.length > 1 && (
+                  <p className="text-xs text-slate-500 mt-2">
+                    +{photos.length - 1} more photo{photos.length > 2 ? 's' : ''}
+                  </p>
+                )}
               </div>
             </div>
           </div>

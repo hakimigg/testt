@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabaseHelpers } from "../lib/supabase";
 import { Button } from "../components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 
 export default function ProductDetailPage() {
@@ -9,19 +10,9 @@ export default function ProductDetailPage() {
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(null);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
 
-  useEffect(() => {
-    async function loadUser() {
-      try {
-        const currentUser = await supabaseHelpers.getCurrentUser();
-        setUser(currentUser);
-      } catch (e) { /* not logged in */ }
-    }
-    loadUser();
-  }, []);
 
 
   useEffect(() => {
@@ -40,38 +31,17 @@ export default function ProductDetailPage() {
   }, [id]);
 
 
-  useEffect(() => {
-    async function checkWishlist() {
-      if (user && product) {
-        try {
-          const wishlistItems = await supabaseHelpers.getWishlist(user.id);
-          setIsWishlisted(wishlistItems.some(item => item.product_id === product.id));
-        } catch (error) {
-          console.error('Error checking wishlist:', error);
-        }
-      }
-    }
-    checkWishlist();
-  }, [user, product]);
 
 
-  const handleWishlistToggle = async () => {
-    if (!user) {
-      // For now, just alert - you can implement proper auth later
-      alert('Please sign in to add items to your wishlist');
-      return;
+  const nextPhoto = () => {
+    if (product?.photos && product.photos.length > 1) {
+      setCurrentPhotoIndex((prev) => (prev + 1) % product.photos.length);
     }
-    try {
-      if (isWishlisted) {
-        await supabaseHelpers.removeFromWishlist(user.id, product.id);
-        setIsWishlisted(false);
-      } else {
-        await supabaseHelpers.addToWishlist(user.id, product.id);
-        setIsWishlisted(true);
-      }
-    } catch (error) {
-      console.error('Error updating wishlist:', error);
-      alert('Error updating wishlist. Please try again.');
+  };
+
+  const prevPhoto = () => {
+    if (product?.photos && product.photos.length > 1) {
+      setCurrentPhotoIndex((prev) => (prev - 1 + product.photos.length) % product.photos.length);
     }
   };
 
@@ -90,10 +60,77 @@ export default function ProductDetailPage() {
         ← Back
       </Button>
       <div className="grid md:grid-cols-2 gap-12">
-        <div className="border border-slate-200 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-12 min-h-[400px]">
-          <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-2xl">
-            <span className="text-white font-bold text-4xl">{product.name.charAt(0).toUpperCase()}</span>
+        {/* Photo Gallery */}
+        <div className="relative">
+          <div className="border border-slate-200 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden min-h-[400px]">
+            {product.photos && product.photos.length > 0 ? (
+              <>
+                <img 
+                  src={product.photos[currentPhotoIndex]} 
+                  alt={`${product.name} - Photo ${currentPhotoIndex + 1}`}
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* Navigation arrows for multiple photos */}
+                {product.photos.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevPhoto}
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all duration-200"
+                    >
+                      <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <button
+                      onClick={nextPhoto}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all duration-200"
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </button>
+                    
+                    {/* Photo indicators */}
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                      {product.photos.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentPhotoIndex(index)}
+                          className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                            index === currentPhotoIndex ? 'bg-white' : 'bg-white/50'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </>
+            ) : (
+              <div className="flex items-center justify-center h-full p-12">
+                <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-2xl">
+                  <span className="text-white font-bold text-4xl">{product.name.charAt(0).toUpperCase()}</span>
+                </div>
+              </div>
+            )}
           </div>
+          
+          {/* Thumbnail strip for multiple photos */}
+          {product.photos && product.photos.length > 1 && (
+            <div className="flex space-x-2 mt-4 overflow-x-auto pb-2">
+              {product.photos.map((photo, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentPhotoIndex(index)}
+                  className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                    index === currentPhotoIndex ? 'border-blue-500' : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <img 
+                    src={photo} 
+                    alt={`${product.name} thumbnail ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="flex flex-col justify-center">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-4">{product.name}</h1>
@@ -119,14 +156,9 @@ export default function ProductDetailPage() {
             <Button 
               size="lg" 
               variant="outline" 
-              onClick={handleWishlistToggle}
-              className={`px-6 py-3 border-2 transition-all duration-200 ${
-                isWishlisted 
-                  ? 'border-red-500 text-red-500 bg-red-50 hover:bg-red-100' 
-                  : 'border-slate-300 text-slate-600 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50'
-              }`}
+              className="px-6 py-3 border-2 border-slate-300 text-slate-600 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200"
             >
-              {isWishlisted ? '♥ Wishlisted' : '♡ Wishlist'}
+              Buy Now
             </Button>
           </div>
         </div>

@@ -83,47 +83,6 @@ export const supabaseHelpers = {
     return true
   },
 
-  // Wishlist
-  async getWishlist(userId) {
-    if (!supabase) {
-      console.warn('Supabase not configured, returning empty wishlist')
-      return []
-    }
-    
-    const { data, error } = await supabase
-      .from('wishlist')
-      .select(`
-        id,
-        product_id,
-        products (*)
-      `)
-      .eq('user_id', userId)
-    
-    if (error) throw error
-    return data
-  },
-
-  async addToWishlist(userId, productId) {
-    const { data, error } = await supabase
-      .from('wishlist')
-      .insert([{ user_id: userId, product_id: productId }])
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
-  },
-
-  async removeFromWishlist(userId, productId) {
-    const { error } = await supabase
-      .from('wishlist')
-      .delete()
-      .eq('user_id', userId)
-      .eq('product_id', productId)
-    
-    if (error) throw error
-    return true
-  },
 
   // Authentication
   async signUp(email, password) {
