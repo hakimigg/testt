@@ -4,12 +4,27 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Check if Supabase credentials are available
+const isSupabaseConfigured = supabaseUrl && supabaseAnonKey
+
+export const supabase = isSupabaseConfigured 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null
+
+// Log warning if Supabase is not configured
+if (!isSupabaseConfigured) {
+  console.warn('Supabase credentials not found. Some features may not work.')
+}
 
 // Helper functions for common operations
 export const supabaseHelpers = {
   // Products
   async getProducts() {
+    if (!supabase) {
+      console.warn('Supabase not configured, returning empty products array')
+      return []
+    }
+    
     const { data, error } = await supabase
       .from('products')
       .select('*')
@@ -20,6 +35,11 @@ export const supabaseHelpers = {
   },
 
   async getProduct(id) {
+    if (!supabase) {
+      console.warn('Supabase not configured, returning null')
+      return null
+    }
+    
     const { data, error } = await supabase
       .from('products')
       .select('*')
@@ -65,6 +85,11 @@ export const supabaseHelpers = {
 
   // Wishlist
   async getWishlist(userId) {
+    if (!supabase) {
+      console.warn('Supabase not configured, returning empty wishlist')
+      return []
+    }
+    
     const { data, error } = await supabase
       .from('wishlist')
       .select(`
