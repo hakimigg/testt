@@ -1,9 +1,12 @@
 // Utility functions for Product Plaza
 
 export function createPageUrl(page) {
+  // Get the base path from the environment
+  const basePath = import.meta.env.PROD ? '/testt' : '';
+  
   // Simple page URL creator - in a real app this might be more complex
-  if (page === "Home") return "/";
-  return `/${page}`;
+  if (page === "Home") return `${basePath}/`;
+  return `${basePath}/${page}`;
 }
 
 // Mock data for development
