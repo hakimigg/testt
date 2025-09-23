@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Layout from './Layout'
 import AdminLayout from './AdminLayout'
@@ -11,11 +11,21 @@ import AdminAddProduct from './pages/admin/AdminAddProduct'
 import AdminProducts from './pages/admin/AdminProducts'
 
 function App() {
-  // Use basename only in production for GitHub Pages
-  const basename = import.meta.env.PROD ? "/testt" : "";
+  // Handle double /testt/testt URLs by redirecting to correct path
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    if (currentPath.includes('/testt/testt/')) {
+      const correctedPath = currentPath.replace('/testt/testt/', '/testt/');
+      console.log('Redirecting from:', currentPath, 'to:', correctedPath);
+      window.location.replace(correctedPath);
+    }
+  }, []);
+  
+  // Simple fix: always use /testt as basename for GitHub Pages
+  const basename = "/testt";
   
   console.log('App basename:', basename);
-  console.log('Environment:', import.meta.env.MODE);
+  console.log('Current pathname:', window.location.pathname);
   
   return (
     <Router basename={basename}>
