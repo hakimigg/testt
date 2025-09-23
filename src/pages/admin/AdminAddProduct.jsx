@@ -138,7 +138,7 @@ export default function AdminAddProduct() {
           {/* Right Column */}
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Price ($) *</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Price (da) *</label>
               <Input 
                 type="number" 
                 value={product.price} 
