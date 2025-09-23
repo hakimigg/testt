@@ -26,10 +26,29 @@ export default function HomePage() {
 
 
   const companies = [
-    { name: "c1", company: "c1" },
-    { name: "c2", company: "c2" },
-    { name: "c3", company: "c3" },
-    { name: "c4", company: "c4" }
+    { 
+      name: "Nokia", 
+      company: "nokia",
+      logo: "https://logos-world.net/wp-content/uploads/2020/05/Nokia-Logo.png",
+      hasLogo: true
+    },
+    { 
+      name: "Samsung", 
+      company: "samsung",
+      logo: "https://logos-world.net/wp-content/uploads/2020/04/Samsung-Logo.png",
+      hasLogo: true
+    },
+    { 
+      name: "Apple", 
+      company: "apple",
+      logo: "https://logos-world.net/wp-content/uploads/2020/04/Apple-Logo.png",
+      hasLogo: true
+    },
+    { 
+      name: "Premium Brand", 
+      company: "premium",
+      hasLogo: false
+    }
   ];
 
 
@@ -66,14 +85,41 @@ export default function HomePage() {
 
       <section className="py-24 px-4 max-w-7xl mx-auto bg-gradient-to-b from-stone-50 to-amber-50">
         <h2 className="text-5xl font-light text-stone-800 text-center mb-16 tracking-wide">Collections</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 max-w-6xl mx-auto">
           {companies.map((co) => (
             <Link key={co.name} to={`${createPageUrl("Products")}?company=${co.company}` }>
-              <div className="p-10 border border-stone-200 rounded-2xl flex items-center justify-start gap-8 hover:shadow-2xl hover:border-amber-300 transition-all duration-500 bg-white/80 hover:transform hover:scale-102 backdrop-blur-sm">
-                <div className="w-20 h-20 bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl flex items-center justify-center shadow-xl flex-shrink-0">
-                  <span className="text-white font-light text-2xl">{co.name.charAt(0).toUpperCase()}</span>
+              <div className="relative p-12 border border-stone-200 rounded-3xl hover:shadow-2xl hover:border-amber-300 transition-all duration-500 bg-white/90 hover:transform hover:scale-102 backdrop-blur-sm overflow-hidden min-h-[200px] flex items-center justify-center">
+                {/* Background Logo - Only if logo exists */}
+                {co.hasLogo && co.logo && (
+                  <div 
+                    className="absolute inset-0 bg-contain bg-center bg-no-repeat opacity-8 grayscale filter blur-[0.5px]"
+                    style={{
+                      backgroundImage: `url('${co.logo}')`,
+                      backgroundSize: '50%'
+                    }}
+                  ></div>
+                )}
+                
+                {/* Decorative background pattern for companies without logos */}
+                {!co.hasLogo && (
+                  <div className="absolute inset-0 opacity-5">
+                    <div className="absolute top-4 left-4 w-8 h-8 border-2 border-amber-400 rounded-full"></div>
+                    <div className="absolute top-8 right-8 w-6 h-6 border-2 border-stone-400 rounded-full"></div>
+                    <div className="absolute bottom-6 left-8 w-4 h-4 bg-amber-300 rounded-full"></div>
+                    <div className="absolute bottom-8 right-6 w-10 h-10 border border-stone-300 rounded-full"></div>
+                  </div>
+                )}
+                
+                {/* Company Name Overlay */}
+                <div className="relative z-10 text-center">
+                  <h3 className="text-4xl font-light text-stone-800 tracking-wider drop-shadow-sm">
+                    {co.name.toUpperCase()}
+                  </h3>
+                  <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto mt-4"></div>
                 </div>
-                <h3 className="text-3xl font-light text-stone-800 tracking-wide">{co.name.toUpperCase()}</h3>
+                
+                {/* Subtle gradient overlay for better text readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent"></div>
               </div>
             </Link>
           ))}
