@@ -3,6 +3,7 @@ import { supabaseHelpers } from "../lib/supabase";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import ProductCard from "../components/shared/ProductCard";
+import DebugInfo from "../components/DebugInfo";
 
 
 export default function HomePage() {
@@ -246,6 +247,9 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      {/* Debug Info - Remove this after debugging */}
+      <DebugInfo />
     </div>
   );
 }

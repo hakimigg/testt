@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { supabaseHelpers } from "../../lib/supabase";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../../utils";
+import DebugInfo from "../../components/DebugInfo";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -15,13 +16,17 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function loadStats() {
       try {
-        const products = await supabaseHelpers.getProducts();
-        const companies = [...new Set(products.map(p => p.company))];
+        // Load both products and companies from their respective sources
+        const [products, companies] = await Promise.all([
+          supabaseHelpers.getProducts(),
+          supabaseHelpers.getCompanies()
+        ]);
+        
         const recentProducts = products.slice(0, 5);
         
         setStats({
           totalProducts: products.length,
-          totalCompanies: companies.length,
+          totalCompanies: companies.length, // Now using actual companies table
           recentProducts
         });
       } catch (error) {
@@ -145,6 +150,9 @@ export default function AdminDashboard() {
           )}
         </div>
       </div>
+
+      {/* Debug Info - Remove this after debugging */}
+      <DebugInfo />
     </div>
   );
 }

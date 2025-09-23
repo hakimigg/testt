@@ -12,9 +12,16 @@ export const supabase = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null
 
-// Log warning if Supabase is not configured
+// Log configuration status
+console.log('🔧 Supabase Configuration Status:')
+console.log('- URL configured:', !!supabaseUrl)
+console.log('- Key configured:', !!supabaseAnonKey)
+console.log('- Supabase client created:', !!supabase)
+
 if (!isSupabaseConfigured) {
-  console.warn('Supabase credentials not found. Some features may not work.')
+  console.warn('⚠️ Supabase credentials not found. Using fallback data.')
+} else {
+  console.log('✅ Supabase configured successfully!')
 }
 
 // Helper functions for common operations
