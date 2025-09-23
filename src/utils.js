@@ -3,8 +3,9 @@
 export function createPageUrl(page) {
   // Since Router has basename="/testt", we don't need to add it here
   // Simple page URL creator - in a real app this might be more complex
-  if (page === "Home") return "/";
-  return `/${page}`;
+  const url = page === "Home" ? "/" : `/${page}`;
+  console.log('createPageUrl:', page, '->', url);
+  return url;
 }
 
 // Mock data for development

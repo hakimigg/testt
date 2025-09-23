@@ -14,6 +14,9 @@ function App() {
   // Use basename only in production for GitHub Pages
   const basename = import.meta.env.PROD ? "/testt" : "";
   
+  console.log('App basename:', basename);
+  console.log('Environment:', import.meta.env.MODE);
+  
   return (
     <Router basename={basename}>
       <Routes>
