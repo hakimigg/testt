@@ -10,6 +10,9 @@ export default function HomePage() {
   const [companies, setCompanies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [companiesLoading, setCompaniesLoading] = useState(true);
+  
+  // Conditional asset path for local vs production
+  const assetPath = import.meta.env.PROD ? "/testt" : "";
 
 
   useEffect(() => {
@@ -41,7 +44,7 @@ export default function HomePage() {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: "url('/testt/assets/background-image.jpeg'), linear-gradient(135deg, #d4a574 0%, #c49968 50%, #b8935c 100%)"
+            backgroundImage: `url('${assetPath}/assets/background-image.jpeg'), linear-gradient(135deg, #d4a574 0%, #c49968 50%, #b8935c 100%)`
           }}
         ></div>
         
