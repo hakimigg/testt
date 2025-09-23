@@ -1,27 +1,19 @@
 import React, { useState } from "react";
-import { Company } from "../../entities/all";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "../../utils";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
 
 export default function AdminAddCompany() {
   const navigate = useNavigate();
   const [company, setCompany] = useState({ 
     name: "", 
     description: "", 
-    website: "",
-    logo: null
+    website: ""
   });
-  const [logoPhoto, setLogoPhoto] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('AdminAddCompany form submitted');
-    console.log('Company data:', company);
-    console.log('Logo:', logoPhoto);
     
     // Basic validation
     if (!company.name || !company.name.trim()) {
@@ -31,26 +23,17 @@ export default function AdminAddCompany() {
     
     setIsSubmitting(true);
     try {
-      const companyToCreate = { 
-        ...company, 
-        logo: null
-      };
+      // For now, just show success message without actual creation
+      setSuccessMessage(`Company "${company.name}" would be created!`);
+      setCompany({ name: "", description: "", website: "" });
       
-      console.log('Creating company with data:', companyToCreate);
-      
-      const newCompany = await Company.create(companyToCreate);
-      setSuccessMessage(`Company "${newCompany.name}" created successfully!`);
-      setCompany({ name: "", description: "", website: "", logo: null });
-      setLogoPhoto([]);
-      
-      // Auto-redirect to manage companies after 2 seconds
       setTimeout(() => {
-        navigate(createPageUrl("admin/companies"));
+        navigate(createPageUrl("admin"));
       }, 2000);
       
     } catch (error) {
-      console.error("Error creating company:", error);
-      alert(`Error creating company: ${error.message || 'Please try again.'}`);
+      console.error("Error:", error);
+      alert(`Error: ${error.message || 'Please try again.'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -86,7 +69,8 @@ export default function AdminAddCompany() {
             {/* Company Name */}
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Company Name *</label>
-              <Input 
+              <input 
+                type="text"
                 value={company.name} 
                 onChange={e => setCompany({ ...company, name: e.target.value })} 
                 required 
@@ -109,7 +93,7 @@ export default function AdminAddCompany() {
             {/* Website */}
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Website</label>
-              <Input 
+              <input 
                 type="url"
                 value={company.website} 
                 onChange={e => setCompany({ ...company, website: e.target.value })} 
@@ -119,13 +103,13 @@ export default function AdminAddCompany() {
             </div>
 
             {/* Submit Button */}
-            <Button 
+            <button 
               type="submit" 
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
             >
               {isSubmitting ? "Creating Company..." : "Create Company"}
-            </Button>
+            </button>
           </form>
         </div>
 

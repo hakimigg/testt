@@ -1,42 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { Company } from "../../entities/all";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../../utils";
-import { Button } from "../../components/ui/button";
 
 export default function AdminManageCompanies() {
-  const [companies, setCompanies] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    async function loadCompanies() {
-      try {
-        const companiesData = await Company.getAll();
-        setCompanies(companiesData);
-      } catch (error) {
-        console.error('Error loading companies:', error);
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadCompanies();
-  }, []);
+  const [companies] = useState([
+    { id: "c1", name: "TechCorp", description: "Leading technology company", website: "https://techcorp.com", created_at: "2024-01-01T00:00:00Z" },
+    { id: "c2", name: "InnovateLab", description: "Innovation-focused company", website: "https://innovatelab.com", created_at: "2024-01-02T00:00:00Z" }
+  ]);
+  const [isLoading] = useState(false);
+  const [error] = useState(null);
 
   const handleDelete = async (companyId, companyName) => {
     if (!confirm(`Are you sure you want to delete "${companyName}"?`)) {
       return;
     }
-
-    try {
-      await Company.delete(companyId);
-      setCompanies(companies.filter(c => c.id !== companyId));
-      alert(`Company "${companyName}" deleted successfully!`);
-    } catch (error) {
-      console.error('Error deleting company:', error);
-      alert(`Error deleting company: ${error.message}`);
-    }
+    alert(`Company "${companyName}" would be deleted!`);
   };
 
   if (isLoading) {
@@ -62,9 +40,9 @@ export default function AdminManageCompanies() {
           <p className="text-lg text-slate-600">View and manage all companies</p>
         </div>
         <Link to={createPageUrl("admin/add-company")}>
-          <Button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200">
+          <button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200">
             Add New Company
-          </Button>
+          </button>
         </Link>
       </div>
 
@@ -82,9 +60,9 @@ export default function AdminManageCompanies() {
           <h3 className="text-xl font-semibold text-slate-800 mb-2">No companies yet</h3>
           <p className="text-slate-600 mb-6">Get started by adding your first company</p>
           <Link to={createPageUrl("admin/add-company")}>
-            <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl">
+            <button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl">
               Add First Company
-            </Button>
+            </button>
           </Link>
         </div>
       ) : (
@@ -150,14 +128,12 @@ export default function AdminManageCompanies() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex justify-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
+                        <button
                           onClick={() => handleDelete(company.id, company.name)}
-                          className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+                          className="px-3 py-1 text-red-600 border border-red-200 rounded hover:bg-red-50 hover:border-red-300 text-sm"
                         >
                           Delete
-                        </Button>
+                        </button>
                       </div>
                     </td>
                   </tr>
