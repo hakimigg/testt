@@ -35,17 +35,31 @@ export default function HomePage() {
 
   return (
     <div>
-      <section className="bg-gradient-to-br from-blue-50 via-white to-slate-50 py-24 text-center">
-        <div className="max-w-4xl mx-auto px-4">
-          <h1 className="text-6xl font-bold bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 bg-clip-text text-transparent mb-6">
+      <section className="relative py-24 text-center overflow-hidden">
+        {/* Background Image - Your chosen modern interior photo */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('/assets/background-image.jpg')",
+            // Fallback gradient if image doesn't load
+            background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #7c3aed 100%)"
+          }}
+        ></div>
+        
+        {/* Light overlay for better text readability while showing your beautiful interior */}
+        <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+        
+        {/* Content */}
+        <div className="relative z-10 max-w-4xl mx-auto px-4">
+          <h1 className="text-6xl font-bold text-white mb-6 drop-shadow-lg">
             Welcome to Product Plaza
           </h1>
-          <p className="text-xl text-slate-600 mb-8 leading-relaxed">
+          <p className="text-xl text-white mb-8 leading-relaxed opacity-90">
             Discover amazing products from top companies, all in one place
           </p>
           <Link 
             to={createPageUrl("Products")} 
-            className="inline-block bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-4 px-8 rounded-xl hover:from-blue-700 hover:to-blue-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="inline-block bg-white text-blue-700 font-bold py-4 px-8 rounded-xl hover:bg-blue-50 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             Browse Products
           </Link>
