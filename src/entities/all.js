@@ -1,6 +1,42 @@
 // Mock entities for Product Plaza demo
 import { mockProducts, mockUsers, mockWishlist } from '../utils.js';
 
+// Mock companies data
+export const mockCompanies = [
+  {
+    id: "c1",
+    name: "TechCorp",
+    description: "Leading technology company specializing in consumer electronics",
+    logo: null,
+    website: "https://techcorp.com",
+    created_at: "2024-01-01T00:00:00Z"
+  },
+  {
+    id: "c2", 
+    name: "InnovateLab",
+    description: "Innovation-focused company creating cutting-edge products",
+    logo: null,
+    website: "https://innovatelab.com",
+    created_at: "2024-01-02T00:00:00Z"
+  },
+  {
+    id: "c3",
+    name: "FutureTech",
+    description: "Future-oriented technology solutions provider",
+    logo: null,
+    website: "https://futuretech.com", 
+    created_at: "2024-01-03T00:00:00Z"
+  },
+  {
+    id: "c4",
+    name: "SmartDevices",
+    description: "Smart device manufacturer and software developer",
+    logo: null,
+    website: "https://smartdevices.com",
+    created_at: "2024-01-04T00:00:00Z"
+  }
+];
+
 // Simulate API delay
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -126,5 +162,57 @@ export class UserWishlist {
       return true;
     }
     throw new Error('Wishlist item not found');
+  }
+}
+
+// Mock Company entity
+export class Company {
+  static async getAll() {
+    console.log('Company.getAll called');
+    await delay(300);
+    return [...mockCompanies];
+  }
+
+  static async getById(id) {
+    console.log('Company.getById called with:', id);
+    await delay(200);
+    return mockCompanies.find(c => c.id === id) || null;
+  }
+
+  static async create(companyData) {
+    console.log('Company.create called with:', companyData);
+    await delay(800);
+    const newCompany = {
+      id: `c${Date.now()}`,
+      ...companyData,
+      created_at: new Date().toISOString()
+    };
+    console.log('Created company:', newCompany);
+    mockCompanies.push(newCompany);
+    return newCompany;
+  }
+
+  static async update(id, companyData) {
+    console.log('Company.update called with:', id, companyData);
+    await delay(500);
+    const index = mockCompanies.findIndex(c => c.id === id);
+    if (index !== -1) {
+      mockCompanies[index] = { ...mockCompanies[index], ...companyData };
+      console.log('Updated company:', mockCompanies[index]);
+      return mockCompanies[index];
+    }
+    throw new Error('Company not found');
+  }
+
+  static async delete(id) {
+    console.log('Company.delete called with:', id);
+    await delay(400);
+    const index = mockCompanies.findIndex(c => c.id === id);
+    if (index !== -1) {
+      const deleted = mockCompanies.splice(index, 1)[0];
+      console.log('Deleted company:', deleted);
+      return deleted;
+    }
+    throw new Error('Company not found');
   }
 }

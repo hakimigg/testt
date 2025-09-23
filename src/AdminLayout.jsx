@@ -9,6 +9,8 @@ export default function AdminLayout({ children }) {
     { name: "Dashboard", url: createPageUrl("admin") },
     { name: "Add Product", url: createPageUrl("admin/add-product") },
     { name: "Manage Products", url: createPageUrl("admin/products") },
+    { name: "Add Company", url: createPageUrl("admin/add-company") },
+    { name: "Manage Companies", url: createPageUrl("admin/companies") },
     { name: "Back to Site", url: createPageUrl("Home") }
   ];
 

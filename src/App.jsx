@@ -9,6 +9,8 @@ import AddProductPage from './pages/AddProductPage'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminAddProduct from './pages/admin/AdminAddProduct'
 import AdminProducts from './pages/admin/AdminProducts'
+import AdminAddCompany from './pages/admin/AdminAddCompany'
+import AdminManageCompanies from './pages/admin/AdminManageCompanies'
 
 function App() {
   // Handle double /testt/testt URLs by redirecting to correct path
@@ -41,6 +43,8 @@ function App() {
         <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
         <Route path="/admin/add-product" element={<AdminLayout><AdminAddProduct /></AdminLayout>} />
         <Route path="/admin/products" element={<AdminLayout><AdminProducts /></AdminLayout>} />
+        <Route path="/admin/add-company" element={<AdminLayout><AdminAddCompany /></AdminLayout>} />
+        <Route path="/admin/companies" element={<AdminLayout><AdminManageCompanies /></AdminLayout>} />
       </Routes>
     </Router>
   )
