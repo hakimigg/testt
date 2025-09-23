@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { mockProducts } from '../utils.js'
 
 // These will be your Supabase project credentials
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
@@ -22,8 +23,6 @@ export const supabaseHelpers = {
   async getProducts() {
     if (!supabase) {
       console.warn('Supabase not configured, returning mock products array')
-      // Import mock data for fallback
-      const { mockProducts } = await import('../utils.js')
       return mockProducts
     }
     
@@ -39,7 +38,6 @@ export const supabaseHelpers = {
   async getProduct(id) {
     if (!supabase) {
       console.warn('Supabase not configured, using mock data')
-      const { mockProducts } = await import('../utils.js')
       return mockProducts.find(p => p.id === id) || null
     }
     
