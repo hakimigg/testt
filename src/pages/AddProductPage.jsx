@@ -15,6 +15,25 @@ export default function AddProductPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('AddProductPage form submitted');
+    console.log('Product data:', product);
+    
+    // Basic validation
+    if (!product.name || !product.name.trim()) {
+      alert('Please enter a product name');
+      return;
+    }
+    
+    if (isNaN(Number(product.price)) || Number(product.price) < 0) {
+      alert('Please enter a valid price');
+      return;
+    }
+    
+    if (isNaN(Number(product.stock)) || Number(product.stock) < 0) {
+      alert('Please enter a valid stock quantity');
+      return;
+    }
+    
     try {
       await User.me();
     } catch (err) {
@@ -23,7 +42,10 @@ export default function AddProductPage() {
     }
     setIsSubmitting(true);
     try {
-      const newProduct = await Product.create({ ...product, price: Number(product.price), stock: Number(product.stock) });
+      const productToCreate = { ...product, price: Number(product.price), stock: Number(product.stock) };
+      console.log('Creating product with data:', productToCreate);
+      
+      const newProduct = await Product.create(productToCreate);
       navigate(createPageUrl(`ProductDetail/${newProduct.id}` ));
     } catch (error) {
       console.error("Error creating product:", error);

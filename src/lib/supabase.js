@@ -51,6 +51,8 @@ export const supabaseHelpers = {
   },
 
   async createProduct(product) {
+    console.log('createProduct called with:', product)
+    
     if (!supabase) {
       console.warn('Supabase not configured, using mock data instead')
       // Fallback to mock behavior
@@ -60,16 +62,34 @@ export const supabaseHelpers = {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }
+      console.log('Created mock product:', newProduct)
       return newProduct
     }
     
+    console.log('Using Supabase to create product')
+    
+    // Clean the product data to only include fields that exist in the schema
+    const cleanProduct = {
+      name: product.name,
+      description: product.description || '',
+      company: product.company,
+      price: product.price,
+      stock: product.stock
+    }
+    
+    console.log('Cleaned product data:', cleanProduct)
+    
     const { data, error } = await supabase
       .from('products')
-      .insert([product])
+      .insert([cleanProduct])
       .select()
       .single()
     
-    if (error) throw error
+    if (error) {
+      console.error('Supabase error:', error)
+      throw error
+    }
+    console.log('Supabase created product:', data)
     return data
   },
 

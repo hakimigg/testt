@@ -16,17 +16,42 @@ export default function AdminAddProduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('AdminAddProduct form submitted');
+    console.log('Product data:', product);
+    console.log('Photos:', photos);
+    
+    // Basic validation
+    if (!product.name || !product.name.trim()) {
+      alert('Please enter a product name');
+      return;
+    }
+    
+    if (isNaN(Number(product.price)) || Number(product.price) < 0) {
+      alert('Please enter a valid price');
+      return;
+    }
+    
+    if (isNaN(Number(product.stock)) || Number(product.stock) < 0) {
+      alert('Please enter a valid stock quantity');
+      return;
+    }
+    
     setIsSubmitting(true);
     try {
       // Convert photos to base64 strings for storage
       const photoUrls = photos.map(photo => photo.preview);
       
-      const newProduct = await supabaseHelpers.createProduct({ 
+      const productToCreate = { 
         ...product, 
         price: Number(product.price), 
-        stock: Number(product.stock),
-        photos: photoUrls // Store photo data as JSON array
-      });
+        stock: Number(product.stock)
+        // Note: photos removed temporarily due to schema issue
+        // photos: photoUrls // Store photo data as JSON array
+      };
+      
+      console.log('Creating product with data:', productToCreate);
+      
+      const newProduct = await supabaseHelpers.createProduct(productToCreate);
       setSuccessMessage(`Product "${newProduct.name}" created successfully!`);
       setProduct({ name: "", description: "", company: "c1", price: 0, stock: 0 });
       setPhotos([]);

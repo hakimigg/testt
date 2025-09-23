@@ -33,6 +33,7 @@ export class Product {
   }
 
   static async create(productData) {
+    console.log('Product.create called with:', productData);
     await delay(800);
     const newProduct = {
       id: Date.now().toString(),
@@ -40,6 +41,7 @@ export class Product {
       specs: productData.specs || [],
       tags: productData.tags || []
     };
+    console.log('Created product:', newProduct);
     mockProducts.push(newProduct);
     return newProduct;
   }
