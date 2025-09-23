@@ -149,18 +149,6 @@ export default function ProductDetailPage() {
           <div className="flex flex-wrap gap-2 mb-8">
             {product.tags?.map(tag => <div key={tag} className="bg-blue-100 text-blue-700 px-3 py-1 text-sm rounded-full font-medium">{tag}</div>)}
           </div>
-          <div className="flex gap-4">
-            <Button size="lg" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 flex-1 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200">
-              Add to Cart
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="px-6 py-3 border-2 border-slate-300 text-slate-600 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200"
-            >
-              Buy Now
-            </Button>
-          </div>
         </div>
       </div>
       <div className="mt-16">
