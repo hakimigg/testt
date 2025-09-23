@@ -135,7 +135,7 @@ export default function AdminProducts() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-bold text-green-600">${product.price}</span>
+                      <span className="font-bold text-green-600">{product.price} da</span>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded-full text-sm font-medium ${

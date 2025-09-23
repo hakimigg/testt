@@ -136,7 +136,7 @@ export default function AdminDashboard() {
                     <p className="text-sm text-slate-600">{product.company.toUpperCase()}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-blue-600">${product.price}</p>
+                    <p className="font-bold text-blue-600">{product.price} da</p>
                     <p className="text-xs text-slate-500">{product.stock} in stock</p>
                   </div>
                 </div>

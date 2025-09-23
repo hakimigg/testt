@@ -136,7 +136,7 @@ export default function ProductDetailPage() {
         <div className="flex flex-col justify-center">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-4">{product.name}</h1>
           <p className="text-lg text-slate-600 mb-6 leading-relaxed">{product.description}</p>
-          <div className="mb-6 text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">${product.price}</div>
+          <div className="mb-6 text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">{product.price} da</div>
           <div className="flex flex-col gap-3 mb-4">
             <div className="bg-slate-100 px-4 py-2 rounded-lg">
               <span className="font-medium text-slate-700">Company:</span>

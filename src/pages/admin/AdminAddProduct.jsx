@@ -191,7 +191,7 @@ export default function AdminAddProduct() {
                     {product.company.toUpperCase()}
                   </span>
                   <span className="font-bold text-purple-600">
-                    ${product.price || "0.00"}
+                    {product.price || "0.00"} da
                   </span>
                 </div>
                 {photos.length > 1 && (

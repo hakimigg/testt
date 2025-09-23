@@ -26,7 +26,7 @@ export default function ProductCard({ product }) {
               {product.company.toUpperCase()}
             </div>
             <div className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
-              ${product.price}
+              {product.price} da
             </div>
         </div>
         <p className="text-sm text-slate-500 mt-3 line-clamp-2 leading-relaxed">{product.description}</p>
