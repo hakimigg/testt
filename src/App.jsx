@@ -11,8 +11,11 @@ import AdminAddProduct from './pages/admin/AdminAddProduct'
 import AdminProducts from './pages/admin/AdminProducts'
 
 function App() {
+  // Use basename only in production for GitHub Pages
+  const basename = import.meta.env.PROD ? "/testt" : "";
+  
   return (
-    <Router basename="/testt">
+    <Router basename={basename}>
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Layout><HomePage /></Layout>} />
