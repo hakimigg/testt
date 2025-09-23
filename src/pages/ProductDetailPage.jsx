@@ -151,19 +151,6 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
-      <div className="mt-16">
-        <h2 className="text-3xl font-bold text-slate-800 mb-8">Specifications</h2>
-        <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-          {product.specs?.map((spec, index) => (
-            <div key={index} className={`flex justify-between p-6 transition-colors duration-150 ${
-              index % 2 === 0 ? 'bg-gradient-to-r from-slate-50 to-white' : 'bg-white'
-            } hover:bg-blue-50`}>
-              <span className="font-semibold text-slate-700">{spec.spec}</span>
-              <span className="text-slate-600 font-medium">{spec.value}</span>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
