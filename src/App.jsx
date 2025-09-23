@@ -22,11 +22,12 @@ function App() {
     }
   }, []);
   
-  // Simple fix: always use /testt as basename for GitHub Pages
-  const basename = "/testt";
+  // Conditional basename: use /testt for GitHub Pages, empty for local development
+  const basename = import.meta.env.PROD ? "/testt" : "";
   
   console.log('App basename:', basename);
   console.log('Current pathname:', window.location.pathname);
+  console.log('Environment:', import.meta.env.PROD ? 'production' : 'development');
   
   return (
     <Router basename={basename}>
