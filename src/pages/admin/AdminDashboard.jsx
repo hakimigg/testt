@@ -10,6 +10,7 @@ export default function AdminDashboard() {
     recentProducts: []
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function loadStats() {
@@ -25,6 +26,7 @@ export default function AdminDashboard() {
         });
       } catch (error) {
         console.error('Error loading stats:', error);
+        setError(error.message);
       } finally {
         setIsLoading(false);
       }
@@ -60,6 +62,11 @@ export default function AdminDashboard() {
           Admin Dashboard
         </h1>
         <p className="text-lg text-slate-600">Manage your Product Plaza</p>
+        {error && (
+          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600">Error loading dashboard: {error}</p>
+          </div>
+        )}
       </div>
 
       {/* Stats Cards */}

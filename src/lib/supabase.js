@@ -21,8 +21,10 @@ export const supabaseHelpers = {
   // Products
   async getProducts() {
     if (!supabase) {
-      console.warn('Supabase not configured, returning empty products array')
-      return []
+      console.warn('Supabase not configured, returning mock products array')
+      // Import mock data for fallback
+      const { mockProducts } = await import('../utils.js')
+      return mockProducts
     }
     
     const { data, error } = await supabase
@@ -36,8 +38,9 @@ export const supabaseHelpers = {
 
   async getProduct(id) {
     if (!supabase) {
-      console.warn('Supabase not configured, returning null')
-      return null
+      console.warn('Supabase not configured, using mock data')
+      const { mockProducts } = await import('../utils.js')
+      return mockProducts.find(p => p.id === id) || null
     }
     
     const { data, error } = await supabase
