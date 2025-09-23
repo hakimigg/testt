@@ -2,23 +2,16 @@ import React, { useState } from "react";
 import { supabaseHelpers } from "../../lib/supabase";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "../../utils";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Textarea } from "../../components/ui/textarea";
-import PhotoUpload from "../../components/ui/PhotoUpload";
 
 export default function AdminAddProduct() {
   const navigate = useNavigate();
-  const [product, setProduct] = useState({ name: "", description: "", company: "c1", price: 0, stock: 0 });
+  const [product, setProduct] = useState({ name: "", description: "", company: "nokia", price: 0, stock: 0 });
   const [photos, setPhotos] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('AdminAddProduct form submitted');
-    console.log('Product data:', product);
-    console.log('Photos:', photos);
     
     // Basic validation
     if (!product.name || !product.name.trim()) {
@@ -37,23 +30,19 @@ export default function AdminAddProduct() {
     }
     
     setIsSubmitting(true);
+    setSuccessMessage("");
+    
     try {
-      // Convert photos to base64 strings for storage
-      const photoUrls = photos.map(photo => photo.preview);
-      
       const productToCreate = { 
         ...product, 
         price: Number(product.price), 
         stock: Number(product.stock),
-        photos: photoUrls // Store photo data as JSON array
+        photos: [] // Simplified for now
       };
-      
-      console.log('Creating product with data:', productToCreate);
       
       const newProduct = await supabaseHelpers.createProduct(productToCreate);
       setSuccessMessage(`Product "${newProduct.name}" created successfully!`);
-      setProduct({ name: "", description: "", company: "c1", price: 0, stock: 0 });
-      setPhotos([]);
+      setProduct({ name: "", description: "", company: "nokia", price: 0, stock: 0 });
       
       // Auto-redirect to dashboard after 2 seconds
       setTimeout(() => {
@@ -61,7 +50,6 @@ export default function AdminAddProduct() {
       }, 2000);
     } catch (error) {
       console.error("Error creating product:", error);
-      setSuccessMessage("");
       alert(`Error creating product: ${error.message || 'Please try again.'}`);
     } finally {
       setIsSubmitting(false);
@@ -85,23 +73,13 @@ export default function AdminAddProduct() {
       )}
       
       <form onSubmit={handleSubmit} className="bg-white rounded-xl p-8 shadow-lg border border-slate-200">
-        {/* Photo Upload Section */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-slate-700 mb-4">Product Photos</h3>
-          <PhotoUpload 
-            onPhotosChange={setPhotos}
-            maxFiles={5}
-            maxSizeInMB={5}
-            existingPhotos={photos}
-          />
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column */}
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Product Name *</label>
-              <Input 
+              <input 
+                type="text"
                 value={product.name} 
                 onChange={e => setProduct({ ...product, name: e.target.value })} 
                 required 
@@ -112,7 +90,7 @@ export default function AdminAddProduct() {
             
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
-              <Textarea 
+              <textarea 
                 value={product.description} 
                 onChange={e => setProduct({ ...product, description: e.target.value })} 
                 className="w-full p-4 border border-slate-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 min-h-[120px]"
@@ -127,10 +105,10 @@ export default function AdminAddProduct() {
                 onChange={e => setProduct({ ...product, company: e.target.value })} 
                 className="w-full p-4 border border-slate-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 bg-white"
               >
-                <option value="c1">C1</option>
-                <option value="c2">C2</option>
-                <option value="c3">C3</option>
-                <option value="c4">C4</option>
+                <option value="nokia">Nokia</option>
+                <option value="samsung">Samsung</option>
+                <option value="apple">Apple</option>
+                <option value="premium">Premium Brand</option>
               </select>
             </div>
           </div>
@@ -139,7 +117,7 @@ export default function AdminAddProduct() {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Price (da) *</label>
-              <Input 
+              <input 
                 type="number" 
                 value={product.price} 
                 onChange={e => setProduct({ ...product, price: e.target.value })} 
@@ -153,7 +131,7 @@ export default function AdminAddProduct() {
 
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Stock Quantity *</label>
-              <Input 
+              <input 
                 type="number" 
                 value={product.stock} 
                 onChange={e => setProduct({ ...product, stock: e.target.value })} 
@@ -168,21 +146,12 @@ export default function AdminAddProduct() {
             <div className="bg-slate-50 rounded-xl p-4">
               <h3 className="font-semibold text-slate-700 mb-3">Product Preview</h3>
               <div className="bg-white rounded-lg p-4 border border-slate-200">
-                {/* Product Image or Placeholder */}
                 <div className="mb-3">
-                  {photos.length > 0 ? (
-                    <img 
-                      src={photos[0].preview} 
-                      alt="Product preview"
-                      className="w-full h-32 object-cover rounded-lg"
-                    />
-                  ) : (
-                    <div className="w-full h-32 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
-                      <span className="text-white font-bold text-2xl">
-                        {product.name ? product.name.charAt(0).toUpperCase() : "P"}
-                      </span>
-                    </div>
-                  )}
+                  <div className="w-full h-32 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold text-2xl">
+                      {product.name ? product.name.charAt(0).toUpperCase() : "P"}
+                    </span>
+                  </div>
                 </div>
                 <h4 className="font-bold text-slate-800">{product.name || "Product Name"}</h4>
                 <p className="text-sm text-slate-600 mt-1">{product.description || "Product description"}</p>
@@ -194,31 +163,26 @@ export default function AdminAddProduct() {
                     {product.price || "0.00"} da
                   </span>
                 </div>
-                {photos.length > 1 && (
-                  <p className="text-xs text-slate-500 mt-2">
-                    +{photos.length - 1} more photo{photos.length > 2 ? 's' : ''}
-                  </p>
-                )}
               </div>
             </div>
           </div>
         </div>
 
         <div className="mt-8 flex gap-4">
-          <Button 
+          <button 
             type="button"
             onClick={() => navigate(createPageUrl("admin"))}
             className="px-6 py-3 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 transition-all duration-200"
           >
             Cancel
-          </Button>
-          <Button 
+          </button>
+          <button 
             type="submit" 
             disabled={isSubmitting} 
-            className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+            className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
           >
             {isSubmitting ? "Creating Product..." : "Create Product"}
-          </Button>
+          </button>
         </div>
       </form>
     </div>

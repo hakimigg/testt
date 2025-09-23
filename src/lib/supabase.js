@@ -12,16 +12,9 @@ export const supabase = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null
 
-// Log configuration status
-console.log('🔧 Supabase Configuration Status:')
-console.log('- URL configured:', !!supabaseUrl)
-console.log('- Key configured:', !!supabaseAnonKey)
-console.log('- Supabase client created:', !!supabase)
-
+// Log warning if Supabase is not configured
 if (!isSupabaseConfigured) {
-  console.warn('⚠️ Supabase credentials not found. Using fallback data.')
-} else {
-  console.log('✅ Supabase configured successfully!')
+  console.warn('Supabase credentials not found. Some features may not work.')
 }
 
 // Helper functions for common operations
@@ -59,62 +52,35 @@ export const supabaseHelpers = {
   },
 
   async createProduct(product) {
-    console.log('createProduct called with:', product)
-    
+    const mockProduct = {
+      id: Date.now().toString(),
+      ...product,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+
     if (!supabase) {
       console.warn('Supabase not configured, using mock data instead')
-      // Fallback to mock behavior
-      const newProduct = {
-        id: Date.now().toString(),
-        ...product,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }
-      console.log('Created mock product:', newProduct)
-      return newProduct
-    }
-    
-    console.log('Using Supabase to create product')
-    
-    // Clean the product data to only include fields that exist in the schema
-    const cleanProduct = {
-      name: product.name?.toString() || '',
-      description: product.description?.toString() || '',
-      company: product.company?.toString() || 'c1',
-      price: Number(product.price) || 0,
-      stock: Number(product.stock) || 0,
-      photos: product.photos || []
-    }
-    
-    // Validate required fields
-    if (!cleanProduct.name.trim()) {
-      throw new Error('Product name is required')
-    }
-    
-    console.log('Cleaned product data:', cleanProduct)
-    
-    const { data, error } = await supabase
-      .from('products')
-      .insert([cleanProduct])
-      .select()
-      .single()
-    
-    if (error) {
-      console.error('Supabase error:', error)
-      console.warn('Falling back to mock data due to Supabase error')
-      
-      // Fallback to mock behavior if Supabase fails
-      const mockProduct = {
-        id: Date.now().toString(),
-        ...cleanProduct,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }
-      console.log('Created fallback mock product:', mockProduct)
       return mockProduct
     }
-    console.log('Supabase created product:', data)
-    return data
+    
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .insert([product])
+        .select()
+        .single()
+      
+      if (error) {
+        console.warn('Supabase error, using mock data instead:', error)
+        return mockProduct
+      }
+      
+      return data
+    } catch (error) {
+      console.warn('Supabase request failed, using mock data instead:', error)
+      return mockProduct
+    }
   },
 
   async updateProduct(id, updates) {

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../../utils";
 import { supabaseHelpers } from "../../lib/supabase";
-import DebugInfo from "../../components/DebugInfo";
 
 export default function AdminManageCompanies() {
   const [companies, setCompanies] = useState([]);
@@ -174,9 +173,6 @@ export default function AdminManageCompanies() {
           Total companies: {companies.length}
         </p>
       </div>
-
-      {/* Debug Info - Remove this after debugging */}
-      <DebugInfo />
     </div>
   );
 }

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { supabaseHelpers } from "../../lib/supabase";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../../utils";
-import DebugInfo from "../../components/DebugInfo";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -150,9 +149,6 @@ export default function AdminDashboard() {
           )}
         </div>
       </div>
-
-      {/* Debug Info - Remove this after debugging */}
-      <DebugInfo />
     </div>
   );
 }
