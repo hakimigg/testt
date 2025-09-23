@@ -40,9 +40,7 @@ export default function HomePage() {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: "url('/assets/background-image.jpeg')",
-            // Fallback gradient if image doesn't load
-            background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #7c3aed 100%)"
+            backgroundImage: "url('/testt/assets/background-image.jpeg'), linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #7c3aed 100%)"
           }}
         ></div>
         
