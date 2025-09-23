@@ -5,24 +5,31 @@ import { createPageUrl } from "../../utils";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    async function loadProducts() {
+    async function loadData() {
       try {
-        const fetchedProducts = await supabaseHelpers.getProducts();
+        const [fetchedProducts, fetchedCompanies] = await Promise.all([
+          supabaseHelpers.getProducts(),
+          supabaseHelpers.getCompanies()
+        ]);
         setProducts(fetchedProducts);
+        
+        // Create filter options from actual companies
+        const companyOptions = ["all", ...fetchedCompanies.map(c => c.id)];
+        setCompanies(companyOptions);
       } catch (error) {
-        console.error('Error loading products:', error);
+        console.error('Error loading data:', error);
       } finally {
         setIsLoading(false);
       }
     }
-    loadProducts();
+    loadData();
   }, []);
 
-  const companies = ["all", "c1", "c2", "c3", "c4"];
   const filteredProducts = filter === "all" 
     ? products 
     : products.filter(p => p.company === filter);
@@ -64,7 +71,7 @@ export default function AdminProducts() {
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                   }`}
                 >
-                  {company === "all" ? "All" : company.toUpperCase()}
+                  {company === "all" ? "All" : company.charAt(0).toUpperCase() + company.slice(1)}
                 </button>
               ))}
             </div>
@@ -131,7 +138,7 @@ export default function AdminProducts() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="bg-slate-100 text-slate-700 px-2 py-1 rounded-full text-sm font-medium">
-                        {product.company.toUpperCase()}
+                        {product.company.charAt(0).toUpperCase() + product.company.slice(1)}
                       </span>
                     </td>
                     <td className="px-6 py-4">

@@ -47,7 +47,7 @@ export default function ProductsPage() {
   }, [products, companyFilter]);
 
 
-  const companies = ["all", "c1", "c2", "c3", "c4"];
+  const companies = ["all", "nokia", "samsung", "apple", "premium"];
 
 
   return (
@@ -68,7 +68,7 @@ export default function ProductsPage() {
                 : "bg-white text-slate-700 border border-slate-200 hover:border-blue-300 hover:text-blue-600 hover:shadow-md hover:transform hover:scale-105"
             }`}
           >
-            {c === "all" ? "All Companies" : c.toUpperCase()}
+            {c === "all" ? "All Companies" : c.charAt(0).toUpperCase() + c.slice(1)}
           </button>
         ))}
       </div>

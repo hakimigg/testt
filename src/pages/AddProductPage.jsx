@@ -10,7 +10,7 @@ import PhotoUpload from "../components/ui/PhotoUpload";
 
 export default function AddProductPage() {
   const navigate = useNavigate();
-  const [product, setProduct] = useState({ name: "", description: "", company: "c1", price: 0, stock: 0 });
+  const [product, setProduct] = useState({ name: "", description: "", company: "nokia", price: 0, stock: 0 });
   const [photos, setPhotos] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -114,10 +114,10 @@ export default function AddProductPage() {
               onChange={e => setProduct({ ...product, company: e.target.value })} 
               className="w-full p-4 border border-slate-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-white"
             >
-              <option value="c1">C1</option>
-              <option value="c2">C2</option>
-              <option value="c3">C3</option>
-              <option value="c4">C4</option>
+              <option value="nokia">Nokia</option>
+              <option value="samsung">Samsung</option>
+              <option value="apple">Apple</option>
+              <option value="premium">Premium Brand</option>
             </select>
           </div>
           <div>

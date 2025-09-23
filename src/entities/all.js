@@ -4,35 +4,35 @@ import { mockProducts, mockUsers, mockWishlist } from '../utils.js';
 // Mock companies data
 export const mockCompanies = [
   {
-    id: "c1",
-    name: "TechCorp",
-    description: "Leading technology company specializing in consumer electronics",
+    id: "nokia",
+    name: "Nokia",
+    description: "Leading technology company specializing in telecommunications and consumer electronics",
     logo: null,
-    website: "https://techcorp.com",
+    website: "https://nokia.com",
     created_at: "2024-01-01T00:00:00Z"
   },
   {
-    id: "c2", 
-    name: "InnovateLab",
-    description: "Innovation-focused company creating cutting-edge products",
+    id: "samsung", 
+    name: "Samsung",
+    description: "Innovation-focused company creating cutting-edge electronics and technology",
     logo: null,
-    website: "https://innovatelab.com",
+    website: "https://samsung.com",
     created_at: "2024-01-02T00:00:00Z"
   },
   {
-    id: "c3",
-    name: "FutureTech",
-    description: "Future-oriented technology solutions provider",
+    id: "apple",
+    name: "Apple",
+    description: "Premium technology brand known for innovative consumer electronics",
     logo: null,
-    website: "https://futuretech.com", 
+    website: "https://apple.com",
     created_at: "2024-01-03T00:00:00Z"
   },
   {
-    id: "c4",
-    name: "SmartDevices",
-    description: "Smart device manufacturer and software developer",
+    id: "premium",
+    name: "Premium Brand",
+    description: "Luxury products and premium quality electronics",
     logo: null,
-    website: "https://smartdevices.com",
+    website: "",
     created_at: "2024-01-04T00:00:00Z"
   }
 ];
