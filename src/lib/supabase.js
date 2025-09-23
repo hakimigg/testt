@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { mockProducts } from '../utils.js'
+import { mockCompanies } from '../entities/all.js'
 
 // These will be your Supabase project credentials
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
@@ -107,13 +108,6 @@ export const supabaseHelpers = {
 
   // Companies
   async getCompanies() {
-    const mockCompanies = [
-      { id: "nokia", name: "Nokia", description: "Leading technology company", website: "https://nokia.com", created_at: "2024-01-01T00:00:00Z" },
-      { id: "samsung", name: "Samsung", description: "Innovation-focused company", website: "https://samsung.com", created_at: "2024-01-02T00:00:00Z" },
-      { id: "apple", name: "Apple", description: "Premium technology brand", website: "https://apple.com", created_at: "2024-01-03T00:00:00Z" },
-      { id: "premium", name: "Premium Brand", description: "Luxury products", website: "", created_at: "2024-01-04T00:00:00Z" }
-    ]
-
     if (!supabase) {
       console.warn('Supabase not configured, returning mock companies')
       return mockCompanies
@@ -140,10 +134,6 @@ export const supabaseHelpers = {
   async getCompany(id) {
     if (!supabase) {
       console.warn('Supabase not configured, using mock data')
-      const mockCompanies = [
-        { id: "nokia", name: "Nokia", description: "Leading technology company", website: "https://nokia.com", created_at: "2024-01-01T00:00:00Z" },
-        { id: "samsung", name: "Samsung", description: "Innovation-focused company", website: "https://samsung.com", created_at: "2024-01-02T00:00:00Z" }
-      ]
       return mockCompanies.find(c => c.id === id) || null
     }
     
