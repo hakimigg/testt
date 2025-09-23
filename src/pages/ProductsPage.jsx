@@ -1,42 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { supabaseHelpers } from "../lib/supabase";
 import ProductCard from "../components/shared/ProductCard";
-import { useLocation } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 
 export default function ProductsPage() {
+  const [searchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const location = useLocation();
-
-
-  const [companyFilter, setCompanyFilter] = useState("all");
-
+  const [companyFilter, setCompanyFilter] = useState(searchParams.get("company") || "all");
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const company = params.get("company");
-    if (company) {
-      setCompanyFilter(company);
-    }
-  }, [location.search]);
-
-
-  useEffect(() => {
-    async function loadProducts() {
+    async function loadData() {
       try {
-        const fetchedProducts = await supabaseHelpers.getProducts();
+        const [fetchedProducts, fetchedCompanies] = await Promise.all([
+          supabaseHelpers.getProducts(),
+          supabaseHelpers.getCompanies()
+        ]);
         setProducts(fetchedProducts);
+        
+        // Create filter options from actual companies
+        const companyOptions = ["all", ...fetchedCompanies.map(c => c.id)];
+        setCompanies(companyOptions);
       } catch (error) {
-        console.error('Error loading products:', error);
+        console.error('Error loading data:', error);
       } finally {
         setIsLoading(false);
       }
     }
-    loadProducts();
+    loadData();
   }, []);
-
 
   useEffect(() => {
     let filtered = products;
@@ -45,10 +40,6 @@ export default function ProductsPage() {
     }
     setFilteredProducts(filtered);
   }, [products, companyFilter]);
-
-
-  const companies = ["all", "nokia", "samsung", "apple", "premium"];
-
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
