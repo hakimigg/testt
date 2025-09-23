@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 
 export default function ProductDetailPage() {
+  // Updated: Specifications section completely removed
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
