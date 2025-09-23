@@ -37,7 +37,8 @@ export default function AdminAddProduct() {
       }, 2000);
     } catch (error) {
       console.error("Error creating product:", error);
-      alert("Error creating product. Please try again.");
+      setSuccessMessage("");
+      alert(`Error creating product: ${error.message || 'Please try again.'}`);
     } finally {
       setIsSubmitting(false);
     }

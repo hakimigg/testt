@@ -51,6 +51,18 @@ export const supabaseHelpers = {
   },
 
   async createProduct(product) {
+    if (!supabase) {
+      console.warn('Supabase not configured, using mock data instead')
+      // Fallback to mock behavior
+      const newProduct = {
+        id: Date.now().toString(),
+        ...product,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+      return newProduct
+    }
+    
     const { data, error } = await supabase
       .from('products')
       .insert([product])

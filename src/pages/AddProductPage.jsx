@@ -25,6 +25,9 @@ export default function AddProductPage() {
     try {
       const newProduct = await Product.create({ ...product, price: Number(product.price), stock: Number(product.stock) });
       navigate(createPageUrl(`ProductDetail/${newProduct.id}` ));
+    } catch (error) {
+      console.error("Error creating product:", error);
+      alert(`Error creating product: ${error.message || 'Please try again.'}`);
     } finally {
       setIsSubmitting(false);
     }
