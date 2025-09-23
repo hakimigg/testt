@@ -44,9 +44,8 @@ export default function AdminAddProduct() {
       const productToCreate = { 
         ...product, 
         price: Number(product.price), 
-        stock: Number(product.stock)
-        // Note: photos removed temporarily due to schema issue
-        // photos: photoUrls // Store photo data as JSON array
+        stock: Number(product.stock),
+        photos: photoUrls // Store photo data as JSON array
       };
       
       console.log('Creating product with data:', productToCreate);

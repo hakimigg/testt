@@ -74,7 +74,8 @@ export const supabaseHelpers = {
       description: product.description?.toString() || '',
       company: product.company?.toString() || 'c1',
       price: Number(product.price) || 0,
-      stock: Number(product.stock) || 0
+      stock: Number(product.stock) || 0,
+      photos: product.photos || []
     }
     
     // Validate required fields

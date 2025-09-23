@@ -5,11 +5,13 @@ import { createPageUrl } from "../utils";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
+import PhotoUpload from "../components/ui/PhotoUpload";
 
 
 export default function AddProductPage() {
   const navigate = useNavigate();
   const [product, setProduct] = useState({ name: "", description: "", company: "c1", price: 0, stock: 0 });
+  const [photos, setPhotos] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
 
@@ -42,7 +44,15 @@ export default function AddProductPage() {
     }
     setIsSubmitting(true);
     try {
-      const productToCreate = { ...product, price: Number(product.price), stock: Number(product.stock) };
+      // Convert photos to base64 strings for storage
+      const photoUrls = photos.map(photo => photo.preview);
+      
+      const productToCreate = { 
+        ...product, 
+        price: Number(product.price), 
+        stock: Number(product.stock),
+        photos: photoUrls
+      };
       console.log('Creating product with data:', productToCreate);
       
       const newProduct = await Product.create(productToCreate);
@@ -64,6 +74,17 @@ export default function AddProductPage() {
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-6 bg-white p-10 border border-slate-200 rounded-2xl shadow-xl">
+        {/* Photo Upload Section */}
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-2">Product Photos</label>
+          <PhotoUpload 
+            onPhotosChange={setPhotos}
+            maxFiles={5}
+            maxSizeInMB={5}
+            existingPhotos={photos}
+          />
+        </div>
+        
         <div>
           <label className="block text-sm font-semibold text-slate-700 mb-2">Product Name</label>
           <Input 

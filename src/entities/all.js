@@ -39,7 +39,8 @@ export class Product {
       id: Date.now().toString(),
       ...productData,
       specs: productData.specs || [],
-      tags: productData.tags || []
+      tags: productData.tags || [],
+      photos: productData.photos || []
     };
     console.log('Created product:', newProduct);
     mockProducts.push(newProduct);
