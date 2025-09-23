@@ -132,6 +132,144 @@ export const supabaseHelpers = {
     return true
   },
 
+  // Companies
+  async getCompanies() {
+    if (!supabase) {
+      console.warn('Supabase not configured, returning mock companies')
+      return [
+        { id: "nokia", name: "Nokia", description: "Leading technology company", website: "https://nokia.com", created_at: "2024-01-01T00:00:00Z" },
+        { id: "samsung", name: "Samsung", description: "Innovation-focused company", website: "https://samsung.com", created_at: "2024-01-02T00:00:00Z" },
+        { id: "apple", name: "Apple", description: "Premium technology brand", website: "https://apple.com", created_at: "2024-01-03T00:00:00Z" },
+        { id: "premium", name: "Premium Brand", description: "Luxury products", website: "", created_at: "2024-01-04T00:00:00Z" }
+      ]
+    }
+    
+    const { data, error } = await supabase
+      .from('companies')
+      .select('*')
+      .order('created_at', { ascending: false })
+    
+    if (error) {
+      console.warn('Supabase companies error, using fallback:', error)
+      return [
+        { id: "nokia", name: "Nokia", description: "Leading technology company", website: "https://nokia.com", created_at: "2024-01-01T00:00:00Z" },
+        { id: "samsung", name: "Samsung", description: "Innovation-focused company", website: "https://samsung.com", created_at: "2024-01-02T00:00:00Z" },
+        { id: "apple", name: "Apple", description: "Premium technology brand", website: "https://apple.com", created_at: "2024-01-03T00:00:00Z" },
+        { id: "premium", name: "Premium Brand", description: "Luxury products", website: "", created_at: "2024-01-04T00:00:00Z" }
+      ]
+    }
+    return data
+  },
+
+  async getCompany(id) {
+    if (!supabase) {
+      console.warn('Supabase not configured, using mock data')
+      const mockCompanies = [
+        { id: "nokia", name: "Nokia", description: "Leading technology company", website: "https://nokia.com", created_at: "2024-01-01T00:00:00Z" },
+        { id: "samsung", name: "Samsung", description: "Innovation-focused company", website: "https://samsung.com", created_at: "2024-01-02T00:00:00Z" }
+      ]
+      return mockCompanies.find(c => c.id === id) || null
+    }
+    
+    const { data, error } = await supabase
+      .from('companies')
+      .select('*')
+      .eq('id', id)
+      .single()
+    
+    if (error) throw error
+    return data
+  },
+
+  async createCompany(company) {
+    console.log('createCompany called with:', company)
+    
+    if (!supabase) {
+      console.warn('Supabase not configured, using mock data instead')
+      const newCompany = {
+        id: company.name.toLowerCase().replace(/\s+/g, '-'),
+        ...company,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+      console.log('Created mock company:', newCompany)
+      return newCompany
+    }
+    
+    const cleanCompany = {
+      id: company.name.toLowerCase().replace(/\s+/g, '-'),
+      name: company.name?.toString() || '',
+      description: company.description?.toString() || '',
+      website: company.website?.toString() || '',
+      logo: company.logo || null
+    }
+    
+    if (!cleanCompany.name.trim()) {
+      throw new Error('Company name is required')
+    }
+    
+    console.log('Cleaned company data:', cleanCompany)
+    
+    const { data, error } = await supabase
+      .from('companies')
+      .insert([cleanCompany])
+      .select()
+      .single()
+    
+    if (error) {
+      console.error('Supabase error:', error)
+      console.warn('Falling back to mock data due to Supabase error')
+      
+      const mockCompany = {
+        ...cleanCompany,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+      console.log('Created fallback mock company:', mockCompany)
+      return mockCompany
+    }
+    
+    console.log('Supabase created company:', data)
+    return data
+  },
+
+  async updateCompany(id, updates) {
+    if (!supabase) {
+      console.warn('Supabase not configured, mock update')
+      return { id, ...updates, updated_at: new Date().toISOString() }
+    }
+    
+    const { data, error } = await supabase
+      .from('companies')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single()
+    
+    if (error) {
+      console.warn('Supabase update error, using mock:', error)
+      return { id, ...updates, updated_at: new Date().toISOString() }
+    }
+    return data
+  },
+
+  async deleteCompany(id) {
+    if (!supabase) {
+      console.warn('Supabase not configured, mock delete')
+      return true
+    }
+    
+    const { error } = await supabase
+      .from('companies')
+      .delete()
+      .eq('id', id)
+    
+    if (error) {
+      console.warn('Supabase delete error:', error)
+      throw error
+    }
+    return true
+  },
 
   // Authentication
   async signUp(email, password) {

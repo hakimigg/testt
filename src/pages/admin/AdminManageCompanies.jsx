@@ -1,20 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../../utils";
+import { supabaseHelpers } from "../../lib/supabase";
 
 export default function AdminManageCompanies() {
-  const [companies] = useState([
-    { id: "c1", name: "TechCorp", description: "Leading technology company", website: "https://techcorp.com", created_at: "2024-01-01T00:00:00Z" },
-    { id: "c2", name: "InnovateLab", description: "Innovation-focused company", website: "https://innovatelab.com", created_at: "2024-01-02T00:00:00Z" }
-  ]);
-  const [isLoading] = useState(false);
-  const [error] = useState(null);
+  const [companies, setCompanies] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    loadCompanies();
+  }, []);
+
+  const loadCompanies = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const fetchedCompanies = await supabaseHelpers.getCompanies();
+      setCompanies(fetchedCompanies);
+    } catch (error) {
+      console.error('Error loading companies:', error);
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleDelete = async (companyId, companyName) => {
     if (!confirm(`Are you sure you want to delete "${companyName}"?`)) {
       return;
     }
-    alert(`Company "${companyName}" would be deleted!`);
+    
+    try {
+      await supabaseHelpers.deleteCompany(companyId);
+      setCompanies(companies.filter(c => c.id !== companyId));
+      alert(`Company "${companyName}" has been deleted successfully!`);
+    } catch (error) {
+      console.error('Error deleting company:', error);
+      alert(`Error deleting company: ${error.message}`);
+    }
   };
 
   if (isLoading) {

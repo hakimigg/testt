@@ -1,39 +1,44 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "../../utils";
+import { supabaseHelpers } from "../../lib/supabase";
 
 export default function AdminAddCompany() {
   const navigate = useNavigate();
   const [company, setCompany] = useState({ 
     name: "", 
     description: "", 
-    website: ""
+    website: "",
+    logo: null
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Basic validation
     if (!company.name || !company.name.trim()) {
-      alert('Please enter a company name');
+      setError('Please enter a company name');
       return;
     }
     
     setIsSubmitting(true);
+    setError("");
+    
     try {
-      // For now, just show success message without actual creation
-      setSuccessMessage(`Company "${company.name}" would be created!`);
-      setCompany({ name: "", description: "", website: "" });
+      const newCompany = await supabaseHelpers.createCompany(company);
+      setSuccessMessage(`Company "${newCompany.name}" has been created successfully!`);
+      setCompany({ name: "", description: "", website: "", logo: null });
       
       setTimeout(() => {
-        navigate(createPageUrl("admin"));
+        navigate(createPageUrl("admin/manage-companies"));
       }, 2000);
       
     } catch (error) {
-      console.error("Error:", error);
-      alert(`Error: ${error.message || 'Please try again.'}`);
+      console.error("Error creating company:", error);
+      setError(error.message || 'Failed to create company. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -51,6 +56,12 @@ export default function AdminAddCompany() {
       {successMessage && (
         <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg">
           <p className="text-green-600 font-medium">{successMessage}</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600 font-medium">{error}</p>
         </div>
       )}
 

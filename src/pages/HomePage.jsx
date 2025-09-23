@@ -7,49 +7,31 @@ import ProductCard from "../components/shared/ProductCard";
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [companiesLoading, setCompaniesLoading] = useState(true);
 
 
   useEffect(() => {
-    async function loadProducts() {
+    async function loadData() {
       try {
-        const fetchedProducts = await supabaseHelpers.getProducts();
+        // Load products and companies in parallel
+        const [fetchedProducts, fetchedCompanies] = await Promise.all([
+          supabaseHelpers.getProducts(),
+          supabaseHelpers.getCompanies()
+        ]);
+        
         setProducts(fetchedProducts.slice(0, 8)); // Get first 8 products
+        setCompanies(fetchedCompanies.slice(0, 4)); // Get first 4 companies
       } catch (error) {
-        console.error('Error loading products:', error);
+        console.error('Error loading data:', error);
       } finally {
         setIsLoading(false);
+        setCompaniesLoading(false);
       }
     }
-    loadProducts();
+    loadData();
   }, []);
-
-
-  const companies = [
-    { 
-      name: "Nokia", 
-      company: "nokia",
-      logo: "https://logos-world.net/wp-content/uploads/2020/05/Nokia-Logo.png",
-      hasLogo: true
-    },
-    { 
-      name: "Samsung", 
-      company: "samsung",
-      logo: "https://logos-world.net/wp-content/uploads/2020/04/Samsung-Logo.png",
-      hasLogo: true
-    },
-    { 
-      name: "Apple", 
-      company: "apple",
-      logo: "https://logos-world.net/wp-content/uploads/2020/04/Apple-Logo.png",
-      hasLogo: true
-    },
-    { 
-      name: "Premium Brand", 
-      company: "premium",
-      hasLogo: false
-    }
-  ];
 
 
   return (
@@ -86,43 +68,90 @@ export default function HomePage() {
       <section className="py-24 px-4 max-w-7xl mx-auto bg-gradient-to-b from-stone-50 to-amber-50">
         <h2 className="text-5xl font-light text-stone-800 text-center mb-16 tracking-wide">Collections</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 max-w-6xl mx-auto">
-          {companies.map((co) => (
-            <Link key={co.name} to={`${createPageUrl("Products")}?company=${co.company}` }>
-              <div className="relative p-12 border border-stone-200 rounded-3xl hover:shadow-2xl hover:border-amber-300 transition-all duration-500 bg-white/90 hover:transform hover:scale-102 backdrop-blur-sm overflow-hidden min-h-[200px] flex items-center justify-center">
-                {/* Background Logo - Only if logo exists */}
-                {co.hasLogo && co.logo && (
-                  <div 
-                    className="absolute inset-0 bg-contain bg-center bg-no-repeat opacity-8 grayscale filter blur-[0.5px]"
-                    style={{
-                      backgroundImage: `url('${co.logo}')`,
-                      backgroundSize: '50%'
-                    }}
-                  ></div>
-                )}
-                
-                {/* Decorative background pattern for companies without logos */}
-                {!co.hasLogo && (
-                  <div className="absolute inset-0 opacity-5">
-                    <div className="absolute top-4 left-4 w-8 h-8 border-2 border-amber-400 rounded-full"></div>
-                    <div className="absolute top-8 right-8 w-6 h-6 border-2 border-stone-400 rounded-full"></div>
-                    <div className="absolute bottom-6 left-8 w-4 h-4 bg-amber-300 rounded-full"></div>
-                    <div className="absolute bottom-8 right-6 w-10 h-10 border border-stone-300 rounded-full"></div>
-                  </div>
-                )}
-                
-                {/* Company Name Overlay */}
-                <div className="relative z-10 text-center">
-                  <h3 className="text-4xl font-light text-stone-800 tracking-wider drop-shadow-sm">
-                    {co.name.toUpperCase()}
-                  </h3>
-                  <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto mt-4"></div>
+          {companiesLoading ? (
+            // Loading skeleton for companies
+            Array(4).fill(0).map((_, i) => (
+              <div key={i} className="relative p-12 border border-stone-200 rounded-3xl bg-white/90 backdrop-blur-sm overflow-hidden min-h-[200px] flex items-center justify-center animate-pulse">
+                <div className="text-center">
+                  <div className="h-8 bg-stone-200 rounded w-32 mx-auto mb-4"></div>
+                  <div className="w-20 h-0.5 bg-stone-200 mx-auto"></div>
                 </div>
-                
-                {/* Subtle gradient overlay for better text readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent"></div>
               </div>
-            </Link>
-          ))}
+            ))
+          ) : (
+            companies.map((co) => (
+              <Link key={co.id} to={`${createPageUrl("Products")}?company=${co.id}` }>
+                <div className="relative p-12 border border-stone-200 rounded-3xl hover:shadow-2xl hover:border-amber-300 transition-all duration-500 bg-white/90 hover:transform hover:scale-102 backdrop-blur-sm overflow-hidden min-h-[200px] flex items-center justify-center">
+                  {/* Background Logo - Only if logo exists */}
+                  {co.logo && (
+                    <div 
+                      className="absolute inset-0 bg-contain bg-center bg-no-repeat opacity-8 grayscale filter blur-[0.5px]"
+                      style={{
+                        backgroundImage: `url('${co.logo}')`,
+                        backgroundSize: '50%'
+                      }}
+                    ></div>
+                  )}
+                  
+                  {/* Company-specific background patterns */}
+                  {!co.logo && (
+                    <div className="absolute inset-0 opacity-8">
+                      {/* Nokia - Tech/Network pattern */}
+                      {co.name === "Nokia" && (
+                        <>
+                          <div className="absolute top-6 left-6 w-12 h-12 border-2 border-blue-300 rounded-lg rotate-12"></div>
+                          <div className="absolute top-12 right-8 w-8 h-8 border border-blue-400 rounded-full"></div>
+                          <div className="absolute bottom-8 left-12 w-6 h-6 bg-blue-200 rounded-full"></div>
+                          <div className="absolute bottom-6 right-6 w-10 h-10 border-2 border-blue-300 rounded-lg -rotate-12"></div>
+                        </>
+                      )}
+                      
+                      {/* Samsung - Modern/Tech pattern */}
+                      {co.name === "Samsung" && (
+                        <>
+                          <div className="absolute top-4 left-8 w-14 h-6 border-2 border-slate-300 rounded-full"></div>
+                          <div className="absolute top-10 right-6 w-8 h-8 border border-slate-400 rounded-lg rotate-45"></div>
+                          <div className="absolute bottom-10 left-6 w-10 h-4 bg-slate-200 rounded-full"></div>
+                          <div className="absolute bottom-4 right-8 w-12 h-12 border border-slate-300 rounded-full"></div>
+                        </>
+                      )}
+                      
+                      {/* Apple - Minimalist/Clean pattern */}
+                      {co.name === "Apple" && (
+                        <>
+                          <div className="absolute top-8 left-8 w-10 h-10 border-2 border-gray-300 rounded-full"></div>
+                          <div className="absolute top-6 right-10 w-6 h-6 bg-gray-200 rounded-full"></div>
+                          <div className="absolute bottom-8 left-10 w-8 h-8 border border-gray-300 rounded-full"></div>
+                          <div className="absolute bottom-6 right-8 w-12 h-12 border border-gray-200 rounded-full"></div>
+                        </>
+                      )}
+                      
+                      {/* Default pattern for other companies */}
+                      {!["Nokia", "Samsung", "Apple"].includes(co.name) && (
+                        <>
+                          <div className="absolute top-4 left-4 w-8 h-8 border-2 border-amber-400 rounded-full"></div>
+                          <div className="absolute top-8 right-8 w-6 h-6 border-2 border-stone-400 rounded-full"></div>
+                          <div className="absolute bottom-6 left-8 w-4 h-4 bg-amber-300 rounded-full"></div>
+                          <div className="absolute bottom-8 right-6 w-10 h-10 border border-stone-300 rounded-full"></div>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Company Name Overlay */}
+                  <div className="relative z-10 text-center">
+                    <h3 className="text-4xl font-light text-stone-800 tracking-wider drop-shadow-sm">
+                      {co.name.toUpperCase()}
+                    </h3>
+                    <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto mt-4"></div>
+                  </div>
+                  
+                  {/* Subtle gradient overlay for better text readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent"></div>
+                </div>
+              </Link>
+            ))
+          )}
         </div>
       </section>
 
