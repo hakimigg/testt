@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "../../utils";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { Textarea } from "../../components/ui/textarea";
-import PhotoUpload from "../../components/ui/PhotoUpload";
 
 export default function AdminAddCompany() {
   const navigate = useNavigate();
@@ -33,12 +31,9 @@ export default function AdminAddCompany() {
     
     setIsSubmitting(true);
     try {
-      // Convert logo to base64 string for storage
-      const logoUrl = logoPhoto.length > 0 ? logoPhoto[0].preview : null;
-      
       const companyToCreate = { 
         ...company, 
-        logo: logoUrl
+        logo: null
       };
       
       console.log('Creating company with data:', companyToCreate);
@@ -80,16 +75,12 @@ export default function AdminAddCompany() {
         {/* Form */}
         <div>
           <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 border border-slate-200 rounded-2xl shadow-lg">
-            {/* Company Logo */}
+            {/* Company Logo - Temporarily disabled */}
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Company Logo</label>
-              <PhotoUpload 
-                onPhotosChange={setLogoPhoto}
-                maxFiles={1}
-                maxSizeInMB={5}
-                existingPhotos={logoPhoto}
-              />
-              <p className="text-xs text-slate-500 mt-1">Upload a company logo (optional)</p>
+              <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center text-slate-500">
+                Logo upload temporarily disabled
+              </div>
             </div>
 
             {/* Company Name */}
@@ -107,7 +98,7 @@ export default function AdminAddCompany() {
             {/* Description */}
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
-              <Textarea 
+              <textarea 
                 value={company.description} 
                 onChange={e => setCompany({ ...company, description: e.target.value })} 
                 className="w-full p-4 border border-slate-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 min-h-[120px]"
@@ -145,19 +136,11 @@ export default function AdminAddCompany() {
             <div className="border border-slate-200 rounded-xl p-6 bg-gradient-to-br from-slate-50 to-white">
               {/* Logo Preview */}
               <div className="mb-4 flex justify-center">
-                {logoPhoto.length > 0 ? (
-                  <img 
-                    src={logoPhoto[0].preview} 
-                    alt="Company logo preview"
-                    className="w-20 h-20 object-cover rounded-lg border-2 border-slate-200"
-                  />
-                ) : (
-                  <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-2xl">
-                      {company.name ? company.name.charAt(0).toUpperCase() : "C"}
-                    </span>
-                  </div>
-                )}
+                <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-2xl">
+                    {company.name ? company.name.charAt(0).toUpperCase() : "C"}
+                  </span>
+                </div>
               </div>
               
               <h4 className="font-bold text-slate-800 text-center mb-2">
