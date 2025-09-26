@@ -49,7 +49,7 @@ export default function Layout({ children }) {
             </nav>
 
             {/* Language Switcher */}
-            <div className="flex items-center">
+            <div className="flex items-center" style={{minHeight: '40px'}}>
               <LanguageSwitcher />
             </div>
           </div>
