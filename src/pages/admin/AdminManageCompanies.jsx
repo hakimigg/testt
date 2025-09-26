@@ -73,11 +73,8 @@ export default function AdminManageCompanies() {
       alert(`Company "${companyName}" has been deleted successfully!`);
       console.log('🎉 Admin: UI updated, company removed from local state');
       
-      // Also reload from database to ensure consistency
-      console.log('🔄 Admin: Reloading companies from database to verify...');
-      setTimeout(() => {
-        loadCompanies();
-      }, 1000); // Small delay to ensure database is updated
+      // Note: Not reloading from database to avoid showing deleted items again
+      // if database deletion failed due to missing environment variables
       
     } catch (error) {
       console.error('❌ Admin: Error deleting company:', error);
