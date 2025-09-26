@@ -5,30 +5,31 @@ const LanguageSwitcher = () => {
   const { i18n } = useTranslation();
 
   const changeLanguage = (lng) => {
+    console.log('🌐 Switching to language:', lng);
     i18n.changeLanguage(lng);
   };
 
   return (
-    <div className="flex items-center space-x-2 bg-blue-600 rounded-lg p-1 shadow-lg">
+    <div className="flex items-center space-x-2 bg-red-600 rounded-lg p-2 shadow-xl border-2 border-red-400" style={{zIndex: 9999}}>
       <button
         onClick={() => changeLanguage('en')}
-        className={`px-4 py-2 rounded-md text-sm font-bold transition-all duration-300 transform hover:scale-105 ${
+        className={`px-4 py-3 rounded-md text-base font-bold transition-all duration-300 transform hover:scale-110 ${
           i18n.language === 'en'
-            ? 'bg-white text-blue-600 shadow-md'
-            : 'text-white hover:bg-blue-700'
+            ? 'bg-yellow-400 text-red-600 shadow-lg'
+            : 'text-white hover:bg-red-700'
         }`}
       >
-        🇺🇸 EN
+        🇺🇸 ENGLISH
       </button>
       <button
         onClick={() => changeLanguage('fr')}
-        className={`px-4 py-2 rounded-md text-sm font-bold transition-all duration-300 transform hover:scale-105 ${
+        className={`px-4 py-3 rounded-md text-base font-bold transition-all duration-300 transform hover:scale-110 ${
           i18n.language === 'fr'
-            ? 'bg-white text-blue-600 shadow-md'
-            : 'text-white hover:bg-blue-700'
+            ? 'bg-yellow-400 text-red-600 shadow-lg'
+            : 'text-white hover:bg-red-700'
         }`}
       >
-        🇫🇷 FR
+        🇫🇷 FRANÇAIS
       </button>
     </div>
   );
