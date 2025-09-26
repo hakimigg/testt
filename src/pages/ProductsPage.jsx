@@ -22,20 +22,44 @@ export default function ProductsPage() {
         ]);
         setProducts(fetchedProducts);
         
+        // Get unique company IDs from products (this might be where C1, C2, etc. are coming from)
+        const productCompanyIds = [...new Set(fetchedProducts.map(p => p.company))];
+        console.log('Product company IDs:', productCompanyIds);
+        console.log('Fetched companies:', fetchedCompanies);
+        
+        // Define a list of allowed company IDs (whitelist approach)
+        const allowedCompanyIds = ['nokia', 'samsung', 'apple', 'premium'];
+        
+        // Filter products to only include those from allowed companies
+        const filteredProducts = fetchedProducts.filter(product => 
+          allowedCompanyIds.includes(product.company?.toLowerCase())
+        );
+        
+        // Update products to only include valid ones
+        setProducts(filteredProducts);
+        
         // Filter out placeholder companies (like C1, C2, C3, etc.) and only keep real companies
         const realCompanies = fetchedCompanies.filter(company => {
-          // Only include companies that have proper names (not single letters or placeholder patterns)
+          // Only include companies that have proper names and are in our allowed list
           return company.name && 
                  company.name.length > 2 && 
                  !company.name.match(/^C\d+$/i) && // Exclude C1, C2, C3, etc.
-                 company.name !== company.id; // Exclude cases where name equals ID for placeholders
+                 company.name !== company.id && // Exclude cases where name equals ID for placeholders
+                 allowedCompanyIds.includes(company.id?.toLowerCase()); // Only allowed companies
         });
+        
+        // Get valid company IDs that actually have products and are allowed
+        const validCompanyIds = productCompanyIds.filter(companyId => 
+          allowedCompanyIds.includes(companyId?.toLowerCase())
+        );
+        
+        console.log('Valid company IDs:', validCompanyIds);
         
         // Store full company data for display names
         setCompanyData(realCompanies);
         
-        // Create filter options from real companies only
-        const companyOptions = ["all", ...realCompanies.map(c => c.id)];
+        // Create filter options from valid company IDs only
+        const companyOptions = ["all", ...validCompanyIds];
         setCompanies(companyOptions);
       } catch (error) {
         console.error('Error loading data:', error);
