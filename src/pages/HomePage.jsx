@@ -3,6 +3,7 @@ import { supabaseHelpers } from "../lib/supabase";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import ProductCard from "../components/shared/ProductCard";
+import { useTranslation } from 'react-i18next';
 
 
 export default function HomePage() {
@@ -10,6 +11,7 @@ export default function HomePage() {
   const [companies, setCompanies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [companiesLoading, setCompaniesLoading] = useState(true);
+  const { t } = useTranslation();
   
   // Conditional asset path for local vs production
   const assetPath = import.meta.env.PROD ? "/testt" : "";
@@ -56,22 +58,22 @@ export default function HomePage() {
         {/* Content */}
         <div className="relative z-10 max-w-4xl mx-auto px-4">
           <h1 className="text-7xl font-light text-white mb-8 drop-shadow-2xl tracking-wide">
-            Welcome
+            {t('home.title')}
           </h1>
           <p className="text-2xl text-white mb-12 leading-relaxed opacity-95 font-light">
-            Discover amazing products in our curated collection
+            {t('home.subtitle')}
           </p>
           <Link 
             to={createPageUrl("Products")} 
             className="inline-block bg-white/90 text-amber-800 font-medium py-4 px-10 rounded-full hover:bg-white transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-3xl backdrop-blur-sm"
           >
-            Explore Collection
+            {t('home.cta')}
           </Link>
         </div>
       </section>
 
       <section className="py-24 px-4 max-w-7xl mx-auto bg-gradient-to-b from-stone-50 to-amber-50">
-        <h2 className="text-5xl font-light text-stone-800 text-center mb-16 tracking-wide">Collections</h2>
+        <h2 className="text-5xl font-light text-stone-800 text-center mb-16 tracking-wide">{t('home.collections')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 max-w-6xl mx-auto">
           {companiesLoading ? (
             // Loading skeleton for companies
@@ -162,7 +164,7 @@ export default function HomePage() {
 
       <section className="py-24 bg-gradient-to-br from-stone-100 to-amber-100">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-5xl font-light text-stone-800 text-center mb-16 tracking-wide">Featured Collection</h2>
+          <h2 className="text-5xl font-light text-stone-800 text-center mb-16 tracking-wide">{t('home.featured')}</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
             {isLoading
               ? Array(4).fill(0).map((_, i) => (
@@ -176,8 +178,8 @@ export default function HomePage() {
       {/* Connect Section */}
       <section className="py-24 bg-gradient-to-br from-amber-50 to-stone-100">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-5xl font-light text-stone-800 mb-8 tracking-wide">Connect With Us</h2>
-          <p className="text-xl text-stone-600 mb-16 font-light">Follow us on social media and stay connected</p>
+          <h2 className="text-5xl font-light text-stone-800 mb-8 tracking-wide">{t('home.connect')}</h2>
+          <p className="text-xl text-stone-600 mb-16 font-light">{t('home.connectSubtitle')}</p>
           
           <div className="flex justify-center items-center space-x-8">
             {/* Instagram */}
@@ -240,14 +242,13 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="bg-stone-900 text-white py-20">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h3 className="text-4xl font-light mb-6 tracking-wide text-amber-100">Test Website</h3>
+          <h3 className="text-4xl font-light mb-6 tracking-wide text-amber-100">{t('home.footerTitle')}</h3>
           <p className="text-stone-300 mb-12 leading-relaxed text-lg font-light max-w-2xl mx-auto">
-            A curated collection of amazing products. 
-            Discover quality and style in every piece.
+            {t('home.footerSubtitle')}
           </p>
           
           <div className="border-t border-stone-700 pt-8">
-            <p className="text-stone-400 font-light">© 2024 Test Website. All rights reserved.</p>
+            <p className="text-stone-400 font-light">{t('home.footerCopyright')}</p>
           </div>
         </div>
       </footer>

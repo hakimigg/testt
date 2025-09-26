@@ -1,17 +1,20 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "./utils";
+import LanguageSwitcher from "./components/LanguageSwitcher";
+import { useTranslation } from 'react-i18next';
 
 export default function AdminLayout({ children }) {
   const location = useLocation();
+  const { t } = useTranslation();
 
   const adminNavigation = [
-    { name: "Dashboard", url: createPageUrl("admin") },
-    { name: "Add Product", url: createPageUrl("admin/add-product") },
-    { name: "Manage Products", url: createPageUrl("admin/products") },
-    { name: "Add Company", url: createPageUrl("admin/add-company") },
-    { name: "Manage Companies", url: createPageUrl("admin/companies") },
-    { name: "Back to Site", url: createPageUrl("Home") }
+    { nameKey: "admin.dashboard", url: createPageUrl("admin") },
+    { nameKey: "admin.addProduct", url: createPageUrl("admin/add-product") },
+    { nameKey: "admin.manageProducts", url: createPageUrl("admin/products") },
+    { nameKey: "admin.addCompany", url: createPageUrl("admin/add-company") },
+    { nameKey: "admin.manageCompanies", url: createPageUrl("admin/companies") },
+    { nameKey: "admin.backToSite", url: createPageUrl("Home") }
   ];
 
   return (
@@ -35,7 +38,7 @@ export default function AdminLayout({ children }) {
                 const isActive = location.pathname === item.url;
                 return (
                   <Link
-                    key={item.name}
+                    key={item.nameKey}
                     to={item.url}
                     className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActive
@@ -43,11 +46,16 @@ export default function AdminLayout({ children }) {
                         : 'text-white/80 hover:text-white hover:bg-white/10 hover:shadow-md'
                     }`}
                   >
-                    <span>{item.name}</span>
+                    <span>{t(item.nameKey)}</span>
                   </Link>
                 );
               })}
             </nav>
+
+            {/* Language Switcher */}
+            <div className="flex items-center">
+              <LanguageSwitcher />
+            </div>
           </div>
         </div>
       </header>
@@ -61,7 +69,7 @@ export default function AdminLayout({ children }) {
             const isActive = location.pathname.startsWith(item.url);
             return (
               <Link
-                key={item.name}
+                key={item.nameKey}
                 to={item.url}
                 className={`flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 ${
                   isActive 
@@ -72,9 +80,9 @@ export default function AdminLayout({ children }) {
                 <div className={`w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold mb-1 ${
                   isActive ? 'bg-white text-purple-600' : 'bg-white/20 text-white'
                 }`}>
-                  {item.name.charAt(0)}
+                  {t(item.nameKey).charAt(0)}
                 </div>
-                <span className="text-xs font-medium">{item.name.split(' ')[0]}</span>
+                <span className="text-xs font-medium">{t(item.nameKey).split(' ')[0]}</span>
               </Link>
             );
           })}

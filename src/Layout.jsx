@@ -1,15 +1,17 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "./utils";
+import LanguageSwitcher from "./components/LanguageSwitcher";
+import { useTranslation } from 'react-i18next';
 
 
 export default function Layout({ children }) {
   const location = useLocation();
-
+  const { t } = useTranslation();
 
   const navigation = [
-    { name: "Home", url: createPageUrl("Home") },
-    { name: "Products", url: createPageUrl("Products") }
+    { nameKey: "nav.home", url: createPageUrl("Home") },
+    { nameKey: "nav.products", url: createPageUrl("Products") }
   ];
 
 
@@ -32,7 +34,7 @@ export default function Layout({ children }) {
                 const isActive = location.pathname === item.url;
                 return (
                   <Link
-                    key={item.name}
+                    key={item.nameKey}
                     to={item.url}
                     className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActive
@@ -40,11 +42,16 @@ export default function Layout({ children }) {
                         : 'text-slate-600 hover:text-amber-600 hover:bg-amber-50 hover:shadow-md'
                     }`}
                   >
-                    <span>{item.name}</span>
+                    <span>{t(item.nameKey)}</span>
                   </Link>
                 );
               })}
             </nav>
+
+            {/* Language Switcher */}
+            <div className="flex items-center">
+              <LanguageSwitcher />
+            </div>
           </div>
         </div>
       </header>
@@ -59,7 +66,7 @@ export default function Layout({ children }) {
             const isActive = location.pathname.startsWith(item.url);
             return (
               <Link
-                key={item.name}
+                key={item.nameKey}
                 to={item.url}
                 className={`flex flex-col items-center py-2 px-3 rounded-lg transition-all duration-200 ${
                   isActive 
@@ -70,9 +77,9 @@ export default function Layout({ children }) {
                 <div className={`w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold mb-1 ${
                   isActive ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-600'
                 }`}>
-                  {item.name.charAt(0)}
+                  {t(item.nameKey).charAt(0)}
                 </div>
-                <span className="text-xs font-medium">{item.name}</span>
+                <span className="text-xs font-medium">{t(item.nameKey)}</span>
               </Link>
             );
           })}

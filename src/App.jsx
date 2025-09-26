@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import './i18n' // Import i18n configuration
 import Layout from './Layout'
 import AdminLayout from './AdminLayout'
 import HomePage from './pages/HomePage'
