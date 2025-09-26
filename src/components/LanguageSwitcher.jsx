@@ -9,26 +9,26 @@ const LanguageSwitcher = () => {
   };
 
   return (
-    <div className="flex items-center space-x-1 bg-white/90 rounded-lg p-1 shadow-md border border-slate-200">
+    <div className="flex items-center space-x-1">
       <button
         onClick={() => changeLanguage('en')}
-        className={`px-3 py-2 rounded-md text-sm font-semibold transition-all duration-300 transform hover:scale-105 ${
+        className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
           i18n.language === 'en'
-            ? 'bg-amber-600 text-white shadow-lg'
-            : 'text-slate-600 hover:text-amber-600 hover:bg-amber-50'
+            ? 'bg-gradient-to-r from-amber-600 to-amber-700 text-white shadow-lg transform scale-105'
+            : 'text-slate-600 hover:text-amber-600 hover:bg-amber-50 hover:shadow-md'
         }`}
       >
-        🇺🇸 EN
+        EN
       </button>
       <button
         onClick={() => changeLanguage('fr')}
-        className={`px-3 py-2 rounded-md text-sm font-semibold transition-all duration-300 transform hover:scale-105 ${
+        className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
           i18n.language === 'fr'
-            ? 'bg-amber-600 text-white shadow-lg'
-            : 'text-slate-600 hover:text-amber-600 hover:bg-amber-50'
+            ? 'bg-gradient-to-r from-amber-600 to-amber-700 text-white shadow-lg transform scale-105'
+            : 'text-slate-600 hover:text-amber-600 hover:bg-amber-50 hover:shadow-md'
         }`}
       >
-        🇫🇷 FR
+        FR
       </button>
     </div>
   );
