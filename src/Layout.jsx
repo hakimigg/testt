@@ -23,7 +23,7 @@ export default function Layout({ children }) {
             <Link to={createPageUrl("Home")} className="flex items-center space-x-3">
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-amber-800 bg-clip-text text-transparent">
-                  Test Website
+                  Beta Website
                 </h1>
               </div>
             </Link>

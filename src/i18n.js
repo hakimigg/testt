@@ -29,9 +29,9 @@ const resources = {
       "home.featured": "Featured Collection",
       "home.connect": "Connect With Us",
       "home.connectSubtitle": "Follow us on social media and stay connected",
-      "home.footerTitle": "Test Website",
+      "home.footerTitle": "Beta Website",
       "home.footerSubtitle": "A curated collection of amazing products. Discover quality and style in every piece.",
-      "home.footerCopyright": "© 2024 Test Website. All rights reserved.",
+      "home.footerCopyright": "© 2024 Beta Website. All rights reserved.",
 
       // Products Page
       "products.title": "Our Products",
@@ -146,9 +146,9 @@ const resources = {
       "home.featured": "Collection en Vedette",
       "home.connect": "Connectez-vous avec Nous",
       "home.connectSubtitle": "Suivez-nous sur les réseaux sociaux et restez connecté",
-      "home.footerTitle": "Site Web de Test",
+      "home.footerTitle": "Site Web Beta",
       "home.footerSubtitle": "Une collection sélectionnée de produits exceptionnels. Découvrez la qualité et le style dans chaque pièce.",
-      "home.footerCopyright": "© 2024 Site Web de Test. Tous droits réservés.",
+      "home.footerCopyright": "© 2024 Site Web Beta. Tous droits réservés.",
 
       // Products Page
       "products.title": "Nos Produits",
