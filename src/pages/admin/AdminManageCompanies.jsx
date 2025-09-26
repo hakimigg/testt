@@ -38,19 +38,31 @@ export default function AdminManageCompanies() {
       return;
     }
     
+    console.log('🎯 Admin: Starting deletion process for:', { companyId, companyName });
+    
     try {
-      console.log('Attempting to delete company:', companyId, companyName);
+      console.log('🔄 Admin: Calling supabaseHelpers.deleteCompany...');
       await supabaseHelpers.deleteCompany(companyId);
+      
+      console.log('✅ Admin: Delete operation completed successfully');
       
       // Only update local state if deletion was successful
       setCompanies(companies.filter(c => c.id !== companyId));
       alert(`Company "${companyName}" has been deleted successfully!`);
-      console.log('Company deleted successfully from UI');
+      console.log('🎉 Admin: UI updated, company removed from local state');
+      
+      // Also reload from database to ensure consistency
+      console.log('🔄 Admin: Reloading companies from database to verify...');
+      setTimeout(() => {
+        loadCompanies();
+      }, 1000); // Small delay to ensure database is updated
+      
     } catch (error) {
-      console.error('Error deleting company:', error);
+      console.error('❌ Admin: Error deleting company:', error);
       alert(`Error deleting company: ${error.message || 'Unknown error occurred'}`);
       
       // Reload companies to ensure UI is in sync with database
+      console.log('🔄 Admin: Reloading companies due to error...');
       loadCompanies();
     }
   };

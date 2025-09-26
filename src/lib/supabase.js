@@ -227,6 +227,9 @@ export const supabaseHelpers = {
   },
 
   async deleteCompany(id) {
+    console.log('🗑️ deleteCompany called with ID:', id);
+    console.log('🔗 Supabase client configured:', !!supabase);
+    
     if (!supabase) {
       console.warn('Supabase not configured, simulating delete')
       // Don't actually modify the shared mockCompanies array
@@ -236,20 +239,38 @@ export const supabaseHelpers = {
     }
     
     try {
-      const { error } = await supabase
+      console.log('🚀 Attempting to delete company from database:', id);
+      
+      // First, let's check if the company exists
+      const { data: existingCompany, error: fetchError } = await supabase
+        .from('companies')
+        .select('*')
+        .eq('id', id)
+        .single()
+      
+      if (fetchError) {
+        console.error('Error checking if company exists:', fetchError);
+        throw new Error(`Company not found or error checking: ${fetchError.message}`);
+      }
+      
+      console.log('📋 Company found, proceeding with deletion:', existingCompany);
+      
+      // Now delete the company
+      const { data, error } = await supabase
         .from('companies')
         .delete()
         .eq('id', id)
+        .select() // This will return the deleted row(s)
       
       if (error) {
-        console.error('Supabase delete error:', error)
+        console.error('❌ Supabase delete error:', error)
         throw new Error(`Failed to delete company: ${error.message}`)
       }
       
-      console.log('Successfully deleted company from Supabase:', id)
+      console.log('✅ Successfully deleted company from Supabase:', data);
       return true
     } catch (error) {
-      console.error('Supabase delete request failed:', error)
+      console.error('💥 Supabase delete request failed:', error)
       throw error
     }
   },
