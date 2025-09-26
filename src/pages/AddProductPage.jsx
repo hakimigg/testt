@@ -11,7 +11,7 @@ import PhotoUpload from "../components/ui/PhotoUpload";
 
 export default function AddProductPage() {
   const navigate = useNavigate();
-  const [product, setProduct] = useState({ name: "", description: "", company: "nokia", price: 0, stock: 0 });
+  const [product, setProduct] = useState({ name: "", description: "", company: "nokia", price: 0 });
   const [photos, setPhotos] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,11 +56,6 @@ export default function AddProductPage() {
       return;
     }
     
-    if (isNaN(Number(product.stock)) || Number(product.stock) < 0) {
-      alert('Please enter a valid stock quantity');
-      return;
-    }
-    
     try {
       await User.me();
     } catch (err) {
@@ -74,8 +69,7 @@ export default function AddProductPage() {
       
       const productToCreate = { 
         ...product, 
-        price: Number(product.price), 
-        stock: Number(product.stock),
+        price: Number(product.price),
         photos: photoUrls
       };
       console.log('Creating product with data:', productToCreate);
@@ -165,19 +159,6 @@ export default function AddProductPage() {
               step="0.01"
             />
           </div>
-        </div>
-        
-        <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">Stock Quantity</label>
-          <Input 
-            type="number" 
-            value={product.stock} 
-            onChange={e => setProduct({ ...product, stock: e.target.value })} 
-            required 
-            className="w-full p-4 border border-slate-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
-            placeholder="0"
-            min="0"
-          />
         </div>
         
         <Button 

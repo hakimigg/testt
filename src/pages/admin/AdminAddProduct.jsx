@@ -5,7 +5,7 @@ import { createPageUrl } from "../../utils";
 
 export default function AdminAddProduct() {
   const navigate = useNavigate();
-  const [product, setProduct] = useState({ name: "", description: "", company: "nokia", price: 0, stock: 0 });
+  const [product, setProduct] = useState({ name: "", description: "", company: "nokia", price: 0 });
   const [photos, setPhotos] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,25 +48,19 @@ export default function AdminAddProduct() {
       return;
     }
     
-    if (isNaN(Number(product.stock)) || Number(product.stock) < 0) {
-      alert('Please enter a valid stock quantity');
-      return;
-    }
-    
     setIsSubmitting(true);
     setSuccessMessage("");
     
     try {
       const productToCreate = { 
         ...product, 
-        price: Number(product.price), 
-        stock: Number(product.stock),
+        price: Number(product.price),
         photos: [] // Simplified for now
       };
       
       const newProduct = await supabaseHelpers.createProduct(productToCreate);
       setSuccessMessage(`Product "${newProduct.name}" created successfully!`);
-      setProduct({ name: "", description: "", company: "nokia", price: 0, stock: 0 });
+      setProduct({ name: "", description: "", company: "nokia", price: 0 });
       
       // Auto-redirect to dashboard after 2 seconds
       setTimeout(() => {
@@ -96,7 +90,7 @@ export default function AdminAddProduct() {
         </div>
       )}
       
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl p-8 shadow-lg border border-slate-200">
+      <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 shadow-xl border border-slate-200">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column */}
           <div className="space-y-6">
@@ -160,34 +154,21 @@ export default function AdminAddProduct() {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Stock Quantity *</label>
-              <input 
-                type="number" 
-                value={product.stock} 
-                onChange={e => setProduct({ ...product, stock: e.target.value })} 
-                required 
-                className="w-full p-4 border border-slate-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
-                placeholder="0"
-                min="0"
-              />
-            </div>
-
             {/* Product Preview */}
-            <div className="bg-slate-50 rounded-xl p-4">
-              <h3 className="font-semibold text-slate-700 mb-3">Product Preview</h3>
-              <div className="bg-white rounded-lg p-4 border border-slate-200">
-                <div className="mb-3">
+            <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-6 border border-slate-200">
+              <h3 className="font-semibold text-slate-700 mb-4 text-center">Product Preview</h3>
+              <div className="bg-white rounded-lg p-4 border border-slate-200 shadow-sm">
+                <div className="mb-4">
                   <div className="w-full h-32 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold text-2xl">
                       {product.name ? product.name.charAt(0).toUpperCase() : "P"}
                     </span>
                   </div>
                 </div>
-                <h4 className="font-bold text-slate-800">{product.name || "Product Name"}</h4>
-                <p className="text-sm text-slate-600 mt-1">{product.description || "Product description"}</p>
-                <div className="flex justify-between items-center mt-3">
-                  <span className="text-xs bg-slate-100 px-2 py-1 rounded-full">
+                <h4 className="font-bold text-slate-800 text-center mb-2">{product.name || "Product Name"}</h4>
+                <p className="text-sm text-slate-600 text-center mb-3">{product.description || "Product description"}</p>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs bg-slate-100 px-2 py-1 rounded-full text-slate-600">
                     {companies.find(c => c.id === product.company)?.name?.toUpperCase() || product.company.toUpperCase()}
                   </span>
                   <span className="font-bold text-purple-600">
@@ -203,7 +184,7 @@ export default function AdminAddProduct() {
           <button 
             type="button"
             onClick={() => navigate(createPageUrl("admin"))}
-            className="px-6 py-3 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 transition-all duration-200"
+            className="px-6 py-3 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 transition-all duration-200 font-medium"
           >
             Cancel
           </button>
