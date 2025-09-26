@@ -8,7 +8,6 @@ export default function AdminAddCompany() {
   const [company, setCompany] = useState({ 
     name: "", 
     description: "", 
-    website: "",
     logo: null
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -69,7 +68,7 @@ export default function AdminAddCompany() {
     try {
       const newCompany = await supabaseHelpers.createCompany(company);
       setSuccessMessage(`Company "${newCompany.name}" has been created successfully!`);
-      setCompany({ name: "", description: "", website: "", logo: null });
+      setCompany({ name: "", description: "", logo: null });
       setLogoPreview(null);
       setLogoFile(null);
       // Reset file input
@@ -77,7 +76,7 @@ export default function AdminAddCompany() {
       if (fileInput) fileInput.value = '';
       
       setTimeout(() => {
-        navigate(createPageUrl("admin/manage-companies"));
+        navigate(createPageUrl("admin/companies"));
       }, 2000);
       
     } catch (error) {
@@ -186,18 +185,6 @@ export default function AdminAddCompany() {
               />
             </div>
 
-            {/* Website */}
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Website</label>
-              <input 
-                type="url"
-                value={company.website} 
-                onChange={e => setCompany({ ...company, website: e.target.value })} 
-                className="w-full p-4 border border-slate-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
-                placeholder="https://company.com"
-              />
-            </div>
-
             {/* Submit Button */}
             <button 
               type="submit" 
@@ -237,18 +224,6 @@ export default function AdminAddCompany() {
               <p className="text-sm text-slate-600 text-center mb-3">
                 {company.description || "Company description"}
               </p>
-              {company.website && (
-                <div className="text-center">
-                  <a 
-                    href={company.website} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-xs text-blue-600 hover:text-blue-700 underline"
-                  >
-                    {company.website}
-                  </a>
-                </div>
-              )}
             </div>
           </div>
         </div>
