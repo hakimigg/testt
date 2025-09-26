@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { supabaseHelpers } from "../../lib/supabase";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "../../utils";
@@ -7,8 +7,32 @@ export default function AdminAddProduct() {
   const navigate = useNavigate();
   const [product, setProduct] = useState({ name: "", description: "", company: "nokia", price: 0, stock: 0 });
   const [photos, setPhotos] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingCompanies, setIsLoadingCompanies] = useState(true);
   const [successMessage, setSuccessMessage] = useState("");
+
+  // Load companies from database
+  useEffect(() => {
+    const loadCompanies = async () => {
+      try {
+        setIsLoadingCompanies(true);
+        const fetchedCompanies = await supabaseHelpers.getCompanies();
+        setCompanies(fetchedCompanies);
+
+        // Set default company to first available if current one doesn't exist
+        if (fetchedCompanies.length > 0 && !fetchedCompanies.find(c => c.id === product.company)) {
+          setProduct({ ...product, company: fetchedCompanies[0].id });
+        }
+      } catch (error) {
+        console.error('Error loading companies:', error);
+      } finally {
+        setIsLoadingCompanies(false);
+      }
+    };
+
+    loadCompanies();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -100,16 +124,23 @@ export default function AdminAddProduct() {
 
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Company *</label>
-              <select 
-                value={product.company} 
-                onChange={e => setProduct({ ...product, company: e.target.value })} 
-                className="w-full p-4 border border-slate-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 bg-white"
-              >
-                <option value="nokia">Nokia</option>
-                <option value="samsung">Samsung</option>
-                <option value="apple">Apple</option>
-                <option value="premium">Premium Brand</option>
-              </select>
+              {isLoadingCompanies ? (
+                <div className="w-full p-4 border border-slate-300 rounded-xl bg-slate-50 text-slate-500">
+                  Loading companies...
+                </div>
+              ) : (
+                <select
+                  value={product.company}
+                  onChange={e => setProduct({ ...product, company: e.target.value })}
+                  className="w-full p-4 border border-slate-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 bg-white"
+                >
+                  {companies.map(company => (
+                    <option key={company.id} value={company.id}>
+                      {company.name}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
           </div>
 
@@ -157,7 +188,7 @@ export default function AdminAddProduct() {
                 <p className="text-sm text-slate-600 mt-1">{product.description || "Product description"}</p>
                 <div className="flex justify-between items-center mt-3">
                   <span className="text-xs bg-slate-100 px-2 py-1 rounded-full">
-                    {product.company.toUpperCase()}
+                    {companies.find(c => c.id === product.company)?.name?.toUpperCase() || product.company.toUpperCase()}
                   </span>
                   <span className="font-bold text-purple-600">
                     {product.price || "0.00"} da
