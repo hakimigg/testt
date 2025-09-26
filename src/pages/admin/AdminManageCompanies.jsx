@@ -56,32 +56,52 @@ export default function AdminManageCompanies() {
   };
 
   const handleDelete = async (companyId, companyName) => {
-    if (!confirm(`Are you sure you want to delete "${companyName}"?`)) {
+    if (!confirm(`Are you sure you want to delete "${companyName}"? This action cannot be undone.`)) {
       return;
     }
     
-    console.log('🎯 Admin: Starting deletion process for:', { companyId, companyName });
+    console.log('🗑️ Starting deletion process for:', { companyId, companyName });
+    
+    // Show loading state
+    const originalCompanies = [...companies];
+    setCompanies(companies.map(c => 
+      c.id === companyId ? { ...c, deleting: true } : c
+    ));
     
     try {
-      console.log('🔄 Admin: Calling supabaseHelpers.deleteCompany...');
+      // Step 1: Delete from database
+      console.log('🚀 Deleting company from database...');
       await supabaseHelpers.deleteCompany(companyId);
+      console.log('✅ Database deletion successful');
       
-      console.log('✅ Admin: Delete operation completed successfully');
+      // Step 2: Verify deletion by reloading from database
+      console.log('🔍 Verifying deletion...');
+      const updatedCompanies = await supabaseHelpers.getCompanies();
+      const stillExists = updatedCompanies.find(c => c.id === companyId);
       
-      // Only update local state if deletion was successful
-      setCompanies(companies.filter(c => c.id !== companyId));
-      alert(`Company "${companyName}" has been deleted successfully!`);
-      console.log('🎉 Admin: UI updated, company removed from local state');
+      if (stillExists) {
+        // Deletion failed - company still exists in database
+        console.error('❌ Deletion verification failed - company still exists');
+        setCompanies(originalCompanies);
+        alert(`Failed to delete "${companyName}". The company still exists in the database.`);
+        return;
+      }
       
-      // Note: Not reloading from database to avoid showing deleted items again
-      // if database deletion failed due to missing environment variables
+      // Step 3: Update UI with verified data
+      console.log('✅ Deletion verified - updating UI');
+      setCompanies(updatedCompanies);
+      alert(`✅ Company "${companyName}" has been permanently deleted!`);
+      console.log('🎉 Company successfully deleted and UI updated');
       
     } catch (error) {
-      console.error('❌ Admin: Error deleting company:', error);
-      alert(`Error deleting company: ${error.message || 'Unknown error occurred'}`);
+      console.error('💥 Deletion failed:', error);
       
-      // Reload companies to ensure UI is in sync with database
-      console.log('🔄 Admin: Reloading companies due to error...');
+      // Restore original state on error
+      setCompanies(originalCompanies);
+      alert(`❌ Failed to delete "${companyName}": ${error.message || 'Unknown error occurred'}`);
+      
+      // Also reload to ensure UI is in sync
+      console.log('🔄 Reloading companies after error...');
       loadCompanies();
     }
   };
@@ -227,9 +247,14 @@ export default function AdminManageCompanies() {
                       <div className="flex justify-center gap-2">
                         <button
                           onClick={() => handleDelete(company.id, company.name)}
-                          className="px-3 py-1 text-red-600 border border-red-200 rounded hover:bg-red-50 hover:border-red-300 text-sm"
+                          disabled={company.deleting}
+                          className={`px-3 py-1 text-sm rounded border transition-all duration-200 ${
+                            company.deleting 
+                              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                              : 'text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300'
+                          }`}
                         >
-                          Delete
+                          {company.deleting ? 'Deleting...' : 'Delete'}
                         </button>
                       </div>
                     </td>
