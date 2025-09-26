@@ -10,7 +10,29 @@ export default function AdminManageCompanies() {
 
   useEffect(() => {
     loadCompanies();
+    // Test Supabase connection on component mount
+    testSupabaseConnection();
   }, []);
+
+  const testSupabaseConnection = async () => {
+    try {
+      console.log('🧪 Testing Supabase connection...');
+      const companies = await supabaseHelpers.getCompanies();
+      console.log('✅ Supabase READ test successful, companies:', companies.length);
+      
+      // Test if we can access the supabase client directly
+      const { supabase } = await import('../../lib/supabase');
+      console.log('🔗 Direct Supabase client:', !!supabase);
+      
+      if (supabase) {
+        // Test a simple query to check permissions
+        const { data, error } = await supabase.from('companies').select('count', { count: 'exact' });
+        console.log('📊 Company count query result:', { data, error });
+      }
+    } catch (error) {
+      console.error('❌ Supabase connection test failed:', error);
+    }
+  };
 
   const loadCompanies = async () => {
     try {
@@ -114,11 +136,19 @@ export default function AdminManageCompanies() {
           </h1>
           <p className="text-lg text-slate-600">View and manage all companies</p>
         </div>
-        <Link to={createPageUrl("admin/add-company")}>
-          <button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200">
-            Add New Company
+        <div className="flex gap-3">
+          <button 
+            onClick={() => testSupabaseConnection()}
+            className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+          >
+            Test Connection
           </button>
-        </Link>
+          <Link to={createPageUrl("admin/add-company")}>
+            <button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200">
+              Add New Company
+            </button>
+          </Link>
+        </div>
       </div>
 
 

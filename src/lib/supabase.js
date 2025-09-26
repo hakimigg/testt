@@ -16,6 +16,17 @@ export const supabase = isSupabaseConfigured
 // Log warning if Supabase is not configured
 if (!isSupabaseConfigured) {
   console.warn('Supabase credentials not found. Some features may not work.')
+  console.log('Environment check:', {
+    VITE_SUPABASE_URL: supabaseUrl ? 'SET' : 'NOT SET',
+    VITE_SUPABASE_ANON_KEY: supabaseAnonKey ? 'SET' : 'NOT SET',
+    NODE_ENV: import.meta.env.MODE,
+    allEnvVars: Object.keys(import.meta.env)
+  })
+} else {
+  console.log('✅ Supabase configured successfully:', {
+    url: supabaseUrl?.substring(0, 30) + '...',
+    keyLength: supabaseAnonKey?.length
+  })
 }
 
 // Helper functions for common operations
