@@ -266,19 +266,50 @@ export const supabaseHelpers = {
       
       console.log('📋 Company found, proceeding with deletion:', existingCompany);
       
-      // Now delete the company
-      const { data, error } = await supabase
+      // Now delete the company - try multiple approaches
+      console.log('🔥 Attempting database deletion...');
+      
+      // Method 1: Standard delete
+      let { data, error } = await supabase
         .from('companies')
         .delete()
         .eq('id', id)
-        .select() // This will return the deleted row(s)
+        .select()
       
       if (error) {
-        console.error('❌ Supabase delete error:', error)
-        throw new Error(`Failed to delete company: ${error.message}`)
+        console.error('❌ Standard delete failed:', error);
+        console.log('🔄 Trying alternative delete method...');
+        
+        // Method 2: Delete without select (some RLS policies block select on delete)
+        const { error: deleteError } = await supabase
+          .from('companies')
+          .delete()
+          .eq('id', id)
+        
+        if (deleteError) {
+          console.error('❌ Alternative delete also failed:', deleteError);
+          throw new Error(`Database deletion failed: ${deleteError.message}. This might be a permissions issue in your Supabase database.`);
+        }
+        
+        console.log('✅ Alternative delete method succeeded');
+        data = [{ id }]; // Mock the deleted data
       }
       
       console.log('✅ Successfully deleted company from Supabase:', data);
+      
+      // Double-check deletion by trying to fetch the company
+      const { data: checkData, error: checkError } = await supabase
+        .from('companies')
+        .select('id')
+        .eq('id', id)
+        .maybeSingle()
+      
+      if (checkData) {
+        console.error('❌ Deletion verification failed - company still exists:', checkData);
+        throw new Error(`Deletion failed - company "${id}" still exists in database. This suggests a permissions or RLS policy issue.`);
+      }
+      
+      console.log('✅ Deletion verified - company no longer exists in database');
       return true
     } catch (error) {
       console.error('💥 Supabase delete request failed:', error)

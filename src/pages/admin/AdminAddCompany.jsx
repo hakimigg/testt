@@ -14,6 +14,45 @@ export default function AdminAddCompany() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [error, setError] = useState("");
+  const [logoPreview, setLogoPreview] = useState(null);
+  const [logoFile, setLogoFile] = useState(null);
+
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select a valid image file');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Image size must be less than 5MB');
+        return;
+      }
+      
+      setLogoFile(file);
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setLogoPreview(e.target.result);
+        setCompany({ ...company, logo: e.target.result });
+      };
+      reader.readAsDataURL(file);
+      setError(''); // Clear any previous errors
+    }
+  };
+
+  const removePhoto = () => {
+    setLogoFile(null);
+    setLogoPreview(null);
+    setCompany({ ...company, logo: null });
+    // Reset file input
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) fileInput.value = '';
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,6 +70,11 @@ export default function AdminAddCompany() {
       const newCompany = await supabaseHelpers.createCompany(company);
       setSuccessMessage(`Company "${newCompany.name}" has been created successfully!`);
       setCompany({ name: "", description: "", website: "", logo: null });
+      setLogoPreview(null);
+      setLogoFile(null);
+      // Reset file input
+      const fileInput = document.querySelector('input[type="file"]');
+      if (fileInput) fileInput.value = '';
       
       setTimeout(() => {
         navigate(createPageUrl("admin/manage-companies"));
@@ -69,11 +113,52 @@ export default function AdminAddCompany() {
         {/* Form */}
         <div>
           <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 border border-slate-200 rounded-2xl shadow-lg">
-            {/* Company Logo - Temporarily disabled */}
+            {/* Company Logo */}
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Company Logo</label>
-              <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center text-slate-500">
-                Logo upload temporarily disabled
+              <div className="space-y-4">
+                {/* File Upload Area */}
+                <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-purple-400 transition-colors duration-200">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLogoChange}
+                    className="hidden"
+                    id="logo-upload"
+                  />
+                  <label htmlFor="logo-upload" className="cursor-pointer">
+                    <div className="flex flex-col items-center space-y-2">
+                      <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                      <div className="text-sm">
+                        <span className="font-medium text-purple-600">Click to upload</span>
+                        <span className="text-slate-500"> or drag and drop</span>
+                      </div>
+                      <p className="text-xs text-slate-400">PNG, JPG, GIF up to 5MB</p>
+                    </div>
+                  </label>
+                </div>
+
+                {/* Photo Preview */}
+                {logoPreview && (
+                  <div className="relative">
+                    <img 
+                      src={logoPreview} 
+                      alt="Logo preview" 
+                      className="w-full h-32 object-cover rounded-lg border border-slate-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={removePhoto}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors duration-200"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -131,11 +216,19 @@ export default function AdminAddCompany() {
             <div className="border border-slate-200 rounded-xl p-6 bg-gradient-to-br from-slate-50 to-white">
               {/* Logo Preview */}
               <div className="mb-4 flex justify-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-2xl">
-                    {company.name ? company.name.charAt(0).toUpperCase() : "C"}
-                  </span>
-                </div>
+                {logoPreview ? (
+                  <img 
+                    src={logoPreview} 
+                    alt="Company logo preview" 
+                    className="w-20 h-20 object-cover rounded-lg border-2 border-slate-200"
+                  />
+                ) : (
+                  <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold text-2xl">
+                      {company.name ? company.name.charAt(0).toUpperCase() : "C"}
+                    </span>
+                  </div>
+                )}
               </div>
               
               <h4 className="font-bold text-slate-800 text-center mb-2">
