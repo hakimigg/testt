@@ -28,7 +28,11 @@ export default function ProductsPage() {
         console.log('Fetched companies:', fetchedCompanies);
         
         // Define a list of allowed company IDs (whitelist approach)
-        const allowedCompanyIds = ['nokia', 'samsung', 'apple', 'premium'];
+        // Include both mock companies and real database companies
+        const allowedCompanyIds = [
+          'nokia', 'samsung', 'apple', 'premium', // Mock companies
+          'techcorp', 'innovatelab', 'futuretech', 'smartdevices' // Real database companies
+        ];
         
         // Filter products to only include those from allowed companies
         const filteredProducts = fetchedProducts.filter(product => 

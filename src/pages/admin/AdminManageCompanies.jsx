@@ -32,12 +32,19 @@ export default function AdminManageCompanies() {
     }
     
     try {
+      console.log('Attempting to delete company:', companyId, companyName);
       await supabaseHelpers.deleteCompany(companyId);
+      
+      // Only update local state if deletion was successful
       setCompanies(companies.filter(c => c.id !== companyId));
       alert(`Company "${companyName}" has been deleted successfully!`);
+      console.log('Company deleted successfully from UI');
     } catch (error) {
       console.error('Error deleting company:', error);
-      alert(`Error deleting company: ${error.message}`);
+      alert(`Error deleting company: ${error.message || 'Unknown error occurred'}`);
+      
+      // Reload companies to ensure UI is in sync with database
+      loadCompanies();
     }
   };
 

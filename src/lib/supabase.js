@@ -224,8 +224,16 @@ export const supabaseHelpers = {
 
   async deleteCompany(id) {
     if (!supabase) {
-      console.warn('Supabase not configured, mock delete')
-      return true
+      console.warn('Supabase not configured, performing mock delete')
+      // Actually remove from mock data when Supabase is not configured
+      const index = mockCompanies.findIndex(c => c.id === id)
+      if (index !== -1) {
+        mockCompanies.splice(index, 1)
+        console.log('Removed company from mock data:', id)
+        return true
+      } else {
+        throw new Error(`Company with id ${id} not found in mock data`)
+      }
     }
     
     try {
@@ -235,15 +243,15 @@ export const supabaseHelpers = {
         .eq('id', id)
       
       if (error) {
-        console.warn('Supabase delete error (table may not exist):', error)
-        // For now, pretend it worked since table doesn't exist
-        return true
+        console.error('Supabase delete error:', error)
+        throw new Error(`Failed to delete company: ${error.message}`)
       }
+      
+      console.log('Successfully deleted company from Supabase:', id)
       return true
     } catch (error) {
-      console.warn('Supabase delete request failed:', error)
-      // For now, pretend it worked since table doesn't exist
-      return true
+      console.error('Supabase delete request failed:', error)
+      throw error
     }
   },
 
