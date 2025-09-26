@@ -16,11 +16,18 @@ export default function AdminManageCompanies() {
     try {
       setIsLoading(true);
       setError(null);
+      console.log('Loading companies...');
       const fetchedCompanies = await supabaseHelpers.getCompanies();
-      setCompanies(fetchedCompanies);
+      console.log('Loaded companies:', fetchedCompanies);
+      
+      // Ensure we always have an array, even if empty
+      const companiesArray = Array.isArray(fetchedCompanies) ? fetchedCompanies : [];
+      setCompanies(companiesArray);
     } catch (error) {
       console.error('Error loading companies:', error);
-      setError(error.message);
+      setError(error.message || 'Failed to load companies');
+      // Set empty array on error to prevent blank page
+      setCompanies([]);
     } finally {
       setIsLoading(false);
     }
@@ -54,7 +61,32 @@ export default function AdminManageCompanies() {
         <div className="text-center">
           <div className="animate-pulse">
             <div className="h-8 bg-slate-200 rounded w-64 mx-auto mb-4"></div>
-            <div className="h-4 bg-slate-200 rounded w-48 mx-auto"></div>
+            <div className="h-4 bg-slate-200 rounded w-48 mx-auto mb-8"></div>
+            <div className="grid grid-cols-1 gap-4">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="h-16 bg-slate-200 rounded"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Add error boundary for better error handling
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="text-center">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-8">
+            <h2 className="text-2xl font-bold text-red-800 mb-4">Error Loading Companies</h2>
+            <p className="text-red-600 mb-6">{error}</p>
+            <button 
+              onClick={loadCompanies}
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
+            >
+              Try Again
+            </button>
           </div>
         </div>
       </div>
@@ -77,11 +109,6 @@ export default function AdminManageCompanies() {
         </Link>
       </div>
 
-      {error && (
-        <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-600">Error loading companies: {error}</p>
-        </div>
-      )}
 
       {companies.length === 0 ? (
         <div className="text-center py-12">

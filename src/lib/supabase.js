@@ -114,7 +114,8 @@ export const supabaseHelpers = {
     if (!supabase) {
       console.warn('Supabase not configured, returning mock companies')
       console.log('✅ Returning mockCompanies:', mockCompanies);
-      return mockCompanies
+      // Always return a copy of the array to prevent mutations
+      return [...mockCompanies]
     }
     
     try {
@@ -125,13 +126,16 @@ export const supabaseHelpers = {
       
       if (error) {
         console.warn('Supabase companies error (table may not exist), using fallback:', error)
-        return mockCompanies
+        console.log('Fallback to mockCompanies:', mockCompanies)
+        return [...mockCompanies]
       }
       
-      return data || mockCompanies
+      console.log('✅ Supabase returned companies:', data)
+      return data || [...mockCompanies]
     } catch (error) {
       console.warn('Supabase companies request failed, using fallback:', error)
-      return mockCompanies
+      console.log('Fallback to mockCompanies:', mockCompanies)
+      return [...mockCompanies]
     }
   },
 
@@ -224,16 +228,11 @@ export const supabaseHelpers = {
 
   async deleteCompany(id) {
     if (!supabase) {
-      console.warn('Supabase not configured, performing mock delete')
-      // Actually remove from mock data when Supabase is not configured
-      const index = mockCompanies.findIndex(c => c.id === id)
-      if (index !== -1) {
-        mockCompanies.splice(index, 1)
-        console.log('Removed company from mock data:', id)
-        return true
-      } else {
-        throw new Error(`Company with id ${id} not found in mock data`)
-      }
+      console.warn('Supabase not configured, simulating delete')
+      // Don't actually modify the shared mockCompanies array
+      // Just simulate a successful deletion
+      console.log('Simulated deletion of company:', id)
+      return true
     }
     
     try {
