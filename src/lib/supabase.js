@@ -108,8 +108,12 @@ export const supabaseHelpers = {
 
   // Companies
   async getCompanies() {
+    console.log('🔍 getCompanies called');
+    console.log('📦 mockCompanies:', mockCompanies);
+    
     if (!supabase) {
       console.warn('Supabase not configured, returning mock companies')
+      console.log('✅ Returning mockCompanies:', mockCompanies);
       return mockCompanies
     }
     

@@ -24,8 +24,10 @@ export default function HomePage() {
           supabaseHelpers.getCompanies()
         ]);
         
+        console.log('🏠 HomePage - Fetched companies:', fetchedCompanies);
         setProducts(fetchedProducts.slice(0, 8)); // Get first 8 products
         setCompanies(fetchedCompanies.slice(0, 4)); // Get first 4 companies
+        console.log('🏠 HomePage - Set companies:', fetchedCompanies.slice(0, 4));
       } catch (error) {
         console.error('Error loading data:', error);
       } finally {
