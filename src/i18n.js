@@ -22,7 +22,7 @@ const resources = {
       "common.optional": "Optional",
 
       // Home Page
-      "home.title": "Welcome to Product Plaza",
+      "home.title": "Welcome to Beta Website",
       "home.subtitle": "Discover amazing products from top companies",
       "home.cta": "Explore Products",
       "home.collections": "Collections",
@@ -139,7 +139,7 @@ const resources = {
       "common.optional": "Optionnel",
 
       // Home Page
-      "home.title": "Bienvenue sur Product Plaza",
+      "home.title": "Bienvenue sur Beta Website",
       "home.subtitle": "Découvrez des produits exceptionnels des meilleures entreprises",
       "home.cta": "Explorer les Produits",
       "home.collections": "Collections",
