@@ -8,6 +8,7 @@ export default function ProductsPage() {
   const [searchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [companies, setCompanies] = useState([]);
+  const [companyData, setCompanyData] = useState([]); // Store full company objects for display names
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [companyFilter, setCompanyFilter] = useState(searchParams.get("company") || "all");
@@ -21,8 +22,20 @@ export default function ProductsPage() {
         ]);
         setProducts(fetchedProducts);
         
-        // Create filter options from actual companies
-        const companyOptions = ["all", ...fetchedCompanies.map(c => c.id)];
+        // Filter out placeholder companies (like C1, C2, C3, etc.) and only keep real companies
+        const realCompanies = fetchedCompanies.filter(company => {
+          // Only include companies that have proper names (not single letters or placeholder patterns)
+          return company.name && 
+                 company.name.length > 2 && 
+                 !company.name.match(/^C\d+$/i) && // Exclude C1, C2, C3, etc.
+                 company.name !== company.id; // Exclude cases where name equals ID for placeholders
+        });
+        
+        // Store full company data for display names
+        setCompanyData(realCompanies);
+        
+        // Create filter options from real companies only
+        const companyOptions = ["all", ...realCompanies.map(c => c.id)];
         setCompanies(companyOptions);
       } catch (error) {
         console.error('Error loading data:', error);
@@ -49,19 +62,25 @@ export default function ProductsPage() {
       </div>
       
       <div className="flex flex-wrap gap-3 mb-12 justify-center">
-        {companies.map(c => (
-          <button
-            key={c}
-            onClick={() => setCompanyFilter(c)}
-            className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
-              companyFilter === c
-                ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg transform scale-105"
-                : "bg-white text-slate-700 border border-slate-200 hover:border-blue-300 hover:text-blue-600 hover:shadow-md hover:transform hover:scale-105"
-            }`}
-          >
-            {c === "all" ? "All Companies" : c.charAt(0).toUpperCase() + c.slice(1)}
-          </button>
-        ))}
+        {companies.map(c => {
+          // Find the company data to get the proper display name
+          const companyInfo = companyData.find(comp => comp.id === c);
+          const displayName = c === "all" ? "All Companies" : (companyInfo?.name || c.charAt(0).toUpperCase() + c.slice(1));
+          
+          return (
+            <button
+              key={c}
+              onClick={() => setCompanyFilter(c)}
+              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+                companyFilter === c
+                  ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg transform scale-105"
+                  : "bg-white text-slate-700 border border-slate-200 hover:border-blue-300 hover:text-blue-600 hover:shadow-md hover:transform hover:scale-105"
+              }`}
+            >
+              {displayName}
+            </button>
+          );
+        })}
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
