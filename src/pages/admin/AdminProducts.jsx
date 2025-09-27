@@ -93,38 +93,37 @@ export default function AdminProducts() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold text-center text-slate-800 mb-4">
           {t('adminProducts.title')}
         </h1>
-        <p className="text-lg text-slate-600">{t('adminProducts.subtitle')}</p>
+        <p className="text-xl text-slate-600 text-center">
+          {t('adminProducts.subtitle')}
+        </p>
       </div>
 
       {/* Filter and Stats */}
-      <div className="bg-white rounded-xl shadow-lg border border-slate-200 mb-8">
-          <div className="flex items-center gap-4">
-            <span className="font-semibold text-slate-700">
-              {t('adminProducts.filterByCompany')}:
-            </span>
-            <div className="flex gap-2 flex-wrap">
-              {companies.map((company) => (
-                <button
-                  key={company.id}
-                  onClick={() => setFilter(company.id)}
-                  className={`px-4 py-2 rounded-lg transition-colors ${
-                    filter === company.id
-                      ? "bg-blue-600 text-white"
-                      : "bg-white text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  {company.id === 'all' ? t('adminProducts.allCompanies') : company.name}
-                </button>
-              ))}
-            </div>
+      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 mb-8">
+        <div className="flex flex-wrap items-center gap-4">
+          <span className="font-semibold text-slate-700">
+            {t('adminProducts.filterByCompany')}:
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {companies.map((company) => (
+              <button
+                key={company.id}
+                onClick={() => setFilter(company.id)}
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  filter === company.id
+                    ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md"
+                    : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200"
+                }`}
+              >
+                {company.id === 'all' ? t('adminProducts.allCompanies') : company.name}
+              </button>
+            ))}
           </div>
-          <div className="text-sm text-slate-600">
-            {t('adminProducts.showingResults', { shown: filteredProducts.length, total: products.length })}
-          </div>
+        </div>
       </div>
 
       {/* Products Table */}
@@ -160,10 +159,10 @@ export default function AdminProducts() {
                 </tr>
               ) : (
                 filteredProducts.map(product => (
-                  <tr key={product.id} className="hover:bg-slate-50 transition-colors duration-150">
+                  <tr key={product.id} className="hover:bg-slate-50 transition-colors duration-200">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                        <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
                           {product.name?.charAt(0)?.toUpperCase() || 'P'}
                         </div>
                         <div>
@@ -195,13 +194,13 @@ export default function AdminProducts() {
                       <div className="flex gap-2">
                         <Link
                           to={createPageUrl(`ProductDetail/${product.id}`)}
-                          className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors duration-200"
+                          className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg text-sm font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-sm hover:shadow-md"
                         >
                           Details
                         </Link>
                         <button
                           onClick={() => handleDelete(product.id)}
-                          className="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors duration-200"
+                          className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg text-sm font-medium hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-sm hover:shadow-md"
                         >
                           {t('common.delete')}
                         </button>
@@ -216,12 +215,15 @@ export default function AdminProducts() {
       </div>
 
       {/* Add Product Button */}
-      <div className="mt-8 text-center">
+      <div className="mt-12 text-center">
         <Link
           to="/admin/add-product"
-          className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 w-fit mx-auto"
+          className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center gap-2 text-base"
         >
-          <span>+</span> {t('adminProducts.addNewProduct')}
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+          </svg>
+          {t('adminProducts.addNewProduct')}
         </Link>
       </div>
     </div>
