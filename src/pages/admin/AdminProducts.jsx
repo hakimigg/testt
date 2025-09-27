@@ -197,7 +197,7 @@ export default function AdminProducts() {
                           to={createPageUrl(`ProductDetail/${product.id}`)}
                           className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors duration-200"
                         >
-                          {t('common.view')}
+                          Details
                         </Link>
                         <button
                           onClick={() => handleDelete(product.id)}
