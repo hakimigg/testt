@@ -65,7 +65,7 @@ export default function HomePage() {
           </p>
           <Link 
             to={createPageUrl("Products")} 
-            className="inline-block bg-white/90 text-amber-800 font-medium py-4 px-10 rounded-full hover:bg-white transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-3xl backdrop-blur-sm"
+            className="inline-block bg-gradient-to-r from-amber-600 to-amber-700 text-white font-semibold py-4 px-10 rounded-full hover:from-amber-700 hover:to-amber-800 transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-3xl"
           >
             {t('home.cta')}
           </Link>
