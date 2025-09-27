@@ -120,33 +120,38 @@ export const supabaseHelpers = {
   // Companies
   async getCompanies() {
     console.log('🔍 getCompanies called');
-    console.log('📦 mockCompanies:', mockCompanies);
     
+    // If Supabase is not configured, return mock companies
     if (!supabase) {
       console.warn('Supabase not configured, returning mock companies')
-      console.log('✅ Returning mockCompanies:', mockCompanies);
-      // Always return a copy of the array to prevent mutations
-      return [...mockCompanies]
+      return [...mockCompanies];
     }
     
     try {
+      console.log('🔍 Fetching companies from Supabase...');
       const { data, error } = await supabase
         .from('companies')
         .select('*')
-        .order('created_at', { ascending: false })
+        .order('name', { ascending: true });
       
       if (error) {
-        console.warn('Supabase companies error (table may not exist), using fallback:', error)
-        console.log('Fallback to mockCompanies:', mockCompanies)
-        return [...mockCompanies]
+        console.error('❌ Error fetching companies:', error);
+        throw error;
       }
       
-      console.log('✅ Supabase returned companies:', data)
-      return data || [...mockCompanies]
+      console.log('✅ Fetched companies from Supabase:', data);
+      
+      // If no companies in the database, return mock companies as fallback
+      if (!data || data.length === 0) {
+        console.warn('No companies found in database, using mock data');
+        return [...mockCompanies];
+      }
+      
+      return data;
+      
     } catch (error) {
-      console.warn('Supabase companies request failed, using fallback:', error)
-      console.log('Fallback to mockCompanies:', mockCompanies)
-      return [...mockCompanies]
+      console.error('❌ Failed to fetch companies, using mock data:', error);
+      return [...mockCompanies];
     }
   },
 
@@ -241,78 +246,76 @@ export const supabaseHelpers = {
     console.log('🗑️ deleteCompany called with ID:', id);
     console.log('🔗 Supabase client configured:', !!supabase);
     
+    // If Supabase is not configured, simulate a successful deletion
     if (!supabase) {
-      console.warn('Supabase not configured, simulating delete')
-      // Don't actually modify the shared mockCompanies array
-      // Just simulate a successful deletion
-      console.log('Simulated deletion of company:', id)
-      return true
+      console.warn('Supabase not configured, simulating delete');
+      console.log('Simulated deletion of company:', id);
+      return true;
     }
     
     try {
       console.log('🚀 Attempting to delete company from database:', id);
       
-      // First, let's check if the company exists
+      // First, verify the company exists
       const { data: existingCompany, error: fetchError } = await supabase
         .from('companies')
         .select('*')
         .eq('id', id)
-        .single()
+        .single();
       
       if (fetchError) {
-        console.error('Error checking if company exists:', fetchError);
+        console.error('❌ Error checking if company exists:', fetchError);
         throw new Error(`Company not found or error checking: ${fetchError.message}`);
       }
       
       console.log('📋 Company found, proceeding with deletion:', existingCompany);
       
-      // Now delete the company - try multiple approaches
+      // Attempt to delete the company
       console.log('🔥 Attempting database deletion...');
       
-      // Method 1: Standard delete
+      // First try: Delete with select (for immediate feedback)
       let { data, error } = await supabase
         .from('companies')
         .delete()
         .eq('id', id)
-        .select()
+        .select();
       
+      // If first attempt fails, try without select (some RLS policies block select on delete)
       if (error) {
-        console.error('❌ Standard delete failed:', error);
-        console.log('🔄 Trying alternative delete method...');
+        console.warn('⚠️ Standard delete failed, trying alternative method:', error);
         
-        // Method 2: Delete without select (some RLS policies block select on delete)
         const { error: deleteError } = await supabase
           .from('companies')
           .delete()
-          .eq('id', id)
+          .eq('id', id);
         
         if (deleteError) {
-          console.error('❌ Alternative delete also failed:', deleteError);
-          throw new Error(`Database deletion failed: ${deleteError.message}. This might be a permissions issue in your Supabase database.`);
+          console.error('❌ Company deletion failed:', deleteError);
+          throw new Error(`Failed to delete company: ${deleteError.message}`);
         }
         
-        console.log('✅ Alternative delete method succeeded');
-        data = [{ id }]; // Mock the deleted data
+        console.log('✅ Company deleted using alternative method');
+      } else {
+        console.log('✅ Company deleted successfully:', data);
       }
       
-      console.log('✅ Successfully deleted company from Supabase:', data);
-      
-      // Double-check deletion by trying to fetch the company
-      const { data: checkData, error: checkError } = await supabase
+      // Verify the company was actually deleted
+      const { data: checkData } = await supabase
         .from('companies')
         .select('id')
         .eq('id', id)
-        .maybeSingle()
+        .maybeSingle();
       
       if (checkData) {
-        console.error('❌ Deletion verification failed - company still exists:', checkData);
-        throw new Error(`Deletion failed - company "${id}" still exists in database. This suggests a permissions or RLS policy issue.`);
+        console.error('❌ Deletion verification failed - company still exists');
+        throw new Error('Company deletion verification failed - the company still exists in the database.');
       }
       
-      console.log('✅ Deletion verified - company no longer exists in database');
-      return true
+      console.log('✅ Deletion verified - company successfully removed');
+      return true;
+      
     } catch (error) {
-      console.error('💥 Supabase delete request failed:', error)
+      console.error('💥 Error in deleteCompany:', error);
       throw error
     }
   },

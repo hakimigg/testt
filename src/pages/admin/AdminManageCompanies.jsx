@@ -58,7 +58,7 @@ export default function AdminManageCompanies() {
   };
 
   const handleDelete = async (companyId, companyName) => {
-    if (!confirm(`Are you sure you want to delete "${companyName}"? This action cannot be undone.`)) {
+    if (!window.confirm(`Are you sure you want to delete "${companyName}"? This action cannot be undone.`)) {
       return;
     }
     
@@ -66,22 +66,27 @@ export default function AdminManageCompanies() {
     
     // Show loading state
     const originalCompanies = [...companies];
-    setCompanies(companies.map(c => 
-      c.id === companyId ? { ...c, deleting: true } : c
-    ));
+    setCompanies(prevCompanies => 
+      prevCompanies.map(c => (c.id === companyId ? { ...c, isDeleting: true } : c))
+    );
     
     try {
       // Step 1: Delete from database
       console.log('🚀 Deleting company from database...');
-      await supabaseHelpers.deleteCompany(companyId);
+      const success = await supabaseHelpers.deleteCompany(companyId);
+      
+      if (!success) {
+        throw new Error('Failed to delete company from database');
+      }
+      
       console.log('✅ Database deletion successful');
       
       // Step 2: Verify deletion by reloading from database
       console.log('🔍 Verifying deletion...');
       const updatedCompanies = await supabaseHelpers.getCompanies();
-      const stillExists = updatedCompanies.find(c => c.id === companyId);
+      const companyStillExists = updatedCompanies.some(c => c.id === companyId);
       
-      if (stillExists) {
+      if (companyStillExists) {
         // Deletion failed - company still exists in database
         console.error('❌ Deletion verification failed - company still exists');
         setCompanies(originalCompanies);
@@ -91,8 +96,14 @@ export default function AdminManageCompanies() {
       
       // Step 3: Update UI with verified data
       console.log('✅ Deletion verified - updating UI');
-      setCompanies(updatedCompanies);
-      alert(`✅ Company "${companyName}" has been permanently deleted!`);
+      
+      // Remove the deleted company from the list
+      setCompanies(prevCompanies => 
+        prevCompanies.filter(company => company.id !== companyId)
+      );
+      
+      // Show success message
+      alert(`✅ Company "${companyName}" has been successfully deleted!`);
       console.log('🎉 Company successfully deleted and UI updated');
       
     } catch (error) {
@@ -100,6 +111,9 @@ export default function AdminManageCompanies() {
       
       // Restore original state on error
       setCompanies(originalCompanies);
+      
+      // Show error message
+      alert(`❌ Failed to delete "${companyName}": ${error.message || 'Unknown error occurred'}`);
       alert(`❌ Failed to delete "${companyName}": ${error.message || 'Unknown error occurred'}`);
       
       // Also reload to ensure UI is in sync
@@ -249,14 +263,29 @@ export default function AdminManageCompanies() {
                       <div className="flex justify-center gap-2">
                         <button
                           onClick={() => handleDelete(company.id, company.name)}
-                          disabled={company.deleting}
+                          disabled={company.isDeleting}
                           className={`px-3 py-1 text-sm rounded border transition-all duration-200 ${
-                            company.deleting 
+                            company.isDeleting 
                               ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                              : 'text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300'
+                              : 'text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 hover:text-red-700'
                           }`}
                         >
-                          {company.deleting ? t('common.deleting') : t('common.delete')}
+                          {company.isDeleting ? (
+                            <span className="flex items-center">
+                              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              {t('common.deleting')}
+                            </span>
+                          ) : (
+                            <span className="flex items-center">
+                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              {t('common.delete')}
+                            </span>
+                          )}
                         </button>
                       </div>
                     </td>

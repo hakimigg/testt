@@ -1,7 +1,7 @@
 // Mock entities for Product Plaza demo
 import { mockProducts, mockUsers, mockWishlist } from '../utils.js';
 
-// Mock companies data
+// Mock companies data - Updated to match database
 export const mockCompanies = [
   {
     id: "nokia",
