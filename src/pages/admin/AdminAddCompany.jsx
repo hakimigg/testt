@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "../../utils";
 import { supabaseHelpers } from "../../lib/supabase";
+import { useTranslation } from "react-i18next";
 
 export default function AdminAddCompany() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [company, setCompany] = useState({ 
     name: "", 
@@ -21,13 +23,13 @@ export default function AdminAddCompany() {
     if (file) {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        setError('Please select a valid image file');
+        setError(t('adminAddCompany.errors.invalidImage'));
         return;
       }
       
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        setError('Image size must be less than 5MB');
+        setError(t('adminAddCompany.errors.imageTooLarge'));
         return;
       }
       
@@ -58,7 +60,7 @@ export default function AdminAddCompany() {
     
     // Basic validation
     if (!company.name || !company.name.trim()) {
-      setError('Please enter a company name');
+      setError(t('adminAddCompany.errors.nameRequired'));
       return;
     }
     
@@ -67,7 +69,7 @@ export default function AdminAddCompany() {
     
     try {
       const newCompany = await supabaseHelpers.createCompany(company);
-      setSuccessMessage(`Company "${newCompany.name}" has been created successfully!`);
+      setSuccessMessage(t('adminAddCompany.success', { companyName: newCompany.name }));
       setCompany({ name: "", description: "", logo: null });
       setLogoPreview(null);
       setLogoFile(null);
@@ -81,7 +83,7 @@ export default function AdminAddCompany() {
       
     } catch (error) {
       console.error("Error creating company:", error);
-      setError(error.message || 'Failed to create company. Please try again.');
+      setError(error.message || t('adminAddCompany.errors.createFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -91,9 +93,9 @@ export default function AdminAddCompany() {
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="text-center mb-12">
         <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
-          Add New Company
+          {t('adminAddCompany.title')}
         </h1>
-        <p className="text-lg text-slate-600">Create a new company profile</p>
+        <p className="text-lg text-slate-600">{t('adminAddCompany.subtitle')}</p>
       </div>
 
       {successMessage && (
@@ -114,7 +116,7 @@ export default function AdminAddCompany() {
           <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 border border-slate-200 rounded-2xl shadow-lg">
             {/* Company Logo */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Company Logo</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">{t('adminAddCompany.logo')}</label>
               <div className="space-y-4">
                 {/* File Upload Area */}
                 <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-purple-400 transition-colors duration-200">
@@ -130,21 +132,20 @@ export default function AdminAddCompany() {
                       <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                       </svg>
-                      <div className="text-sm">
-                        <span className="font-medium text-purple-600">Click to upload</span>
-                        <span className="text-slate-500"> or drag and drop</span>
+                      <div className="text-center">
+                        <span className="font-medium text-purple-600">{t('adminAddCompany.form.clickToUpload')}</span>
+                        <span className="text-slate-500"> {t('adminAddCompany.form.orDragAndDrop')}</span>
                       </div>
-                      <p className="text-xs text-slate-400">PNG, JPG, GIF up to 5MB</p>
+                      <p className="text-xs text-slate-400">{t('adminAddCompany.form.fileTypes')}</p>
                     </div>
                   </label>
                 </div>
-
                 {/* Photo Preview */}
                 {logoPreview && (
                   <div className="relative">
                     <img 
                       src={logoPreview} 
-                      alt="Logo preview" 
+                      alt={t('adminAddCompany.form.logoPreview')}
                       className="w-full h-32 object-cover rounded-lg border border-slate-200"
                     />
                     <button
@@ -163,25 +164,25 @@ export default function AdminAddCompany() {
 
             {/* Company Name */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Company Name *</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">{t('adminAddCompany.companyName')} *</label>
               <input 
                 type="text"
                 value={company.name} 
                 onChange={e => setCompany({ ...company, name: e.target.value })} 
                 required 
                 className="w-full p-4 border border-slate-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
-                placeholder="Enter company name"
+                placeholder={t('adminAddCompany.companyNamePlaceholder')}
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">{t('adminAddCompany.description')}</label>
               <textarea 
                 value={company.description} 
                 onChange={e => setCompany({ ...company, description: e.target.value })} 
                 className="w-full p-4 border border-slate-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 min-h-[120px]"
-                placeholder="Describe the company..."
+                placeholder={t('adminAddCompany.descriptionPlaceholder')}
               />
             </div>
 
@@ -191,7 +192,7 @@ export default function AdminAddCompany() {
               disabled={isSubmitting}
               className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
             >
-              {isSubmitting ? "Creating Company..." : "Create Company"}
+              {isSubmitting ? t('adminAddCompany.creating') : t('adminAddCompany.submit')}
             </button>
           </form>
         </div>
@@ -199,30 +200,30 @@ export default function AdminAddCompany() {
         {/* Preview */}
         <div>
           <div className="bg-white p-8 border border-slate-200 rounded-2xl shadow-lg">
-            <h3 className="text-xl font-bold text-slate-800 mb-6">Company Preview</h3>
+            <h3 className="text-xl font-bold text-slate-800 mb-6">{t('adminAddCompany.preview')}</h3>
             <div className="border border-slate-200 rounded-xl p-6 bg-gradient-to-br from-slate-50 to-white">
               {/* Logo Preview */}
               <div className="mb-4 flex justify-center">
                 {logoPreview ? (
-                  <img 
+                    <img 
                     src={logoPreview} 
-                    alt="Company logo preview" 
+                    alt={t('adminAddCompany.form.companyLogoPreview')}
                     className="w-20 h-20 object-cover rounded-lg border-2 border-slate-200"
                   />
                 ) : (
                   <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold text-2xl">
-                      {company.name ? company.name.charAt(0).toUpperCase() : "C"}
+                      {company.name ? company.name.charAt(0).toUpperCase() : t('adminAddCompany.previewDefault.initial')}
                     </span>
                   </div>
                 )}
               </div>
               
               <h4 className="font-bold text-slate-800 text-center mb-2">
-                {company.name || "Company Name"}
+                {company.name || t('adminAddCompany.previewDefault.name')}
               </h4>
               <p className="text-sm text-slate-600 text-center mb-3">
-                {company.description || "Company description"}
+                {company.description || t('adminAddCompany.previewDefault.description')}
               </p>
             </div>
           </div>

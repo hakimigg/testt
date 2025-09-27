@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { createPageUrl } from "../../utils";
 import { supabaseHelpers } from "../../lib/supabase";
 
 export default function AdminManageCompanies() {
+  const { t } = useTranslation();
   const [companies, setCompanies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -130,13 +132,13 @@ export default function AdminManageCompanies() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center">
           <div className="bg-red-50 border border-red-200 rounded-lg p-8">
-            <h2 className="text-2xl font-bold text-red-800 mb-4">Error Loading Companies</h2>
+            <h2 className="text-2xl font-bold text-red-800 mb-4">{t('adminCompanies.errorLoading')}</h2>
             <p className="text-red-600 mb-6">{error}</p>
             <button 
               onClick={loadCompanies}
               className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
             >
-              Try Again
+              {t('common.tryAgain')}
             </button>
           </div>
         </div>
@@ -149,20 +151,20 @@ export default function AdminManageCompanies() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
-            Manage Companies
+            {t('adminCompanies.title')}
           </h1>
-          <p className="text-lg text-slate-600">View and manage all companies</p>
+          <p className="text-lg text-slate-600">{t('adminCompanies.subtitle')}</p>
         </div>
         <div className="flex gap-3">
           <button 
             onClick={() => testSupabaseConnection()}
             className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
           >
-            Test Connection
+            {t('adminCompanies.testConnection')}
           </button>
           <Link to={createPageUrl("admin/add-company")}>
             <button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200">
-              Add New Company
+              {t('adminCompanies.addNewCompany')}
             </button>
           </Link>
         </div>
@@ -174,11 +176,11 @@ export default function AdminManageCompanies() {
           <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-bold text-3xl">C</span>
           </div>
-          <h3 className="text-xl font-semibold text-slate-800 mb-2">No companies yet</h3>
-          <p className="text-slate-600 mb-6">Get started by adding your first company</p>
+          <h3 className="text-xl font-semibold text-slate-800 mb-2">{t('adminCompanies.noCompanies')}</h3>
+          <p className="text-slate-600 mb-6">{t('adminCompanies.getStarted')}</p>
           <Link to={createPageUrl("admin/add-company")}>
             <button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl">
-              Add First Company
+              {t('adminCompanies.addFirstCompany')}
             </button>
           </Link>
         </div>
@@ -188,11 +190,11 @@ export default function AdminManageCompanies() {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-slate-50 to-slate-100">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">Company</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">Description</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">Website</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">Created</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700">Actions</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">{t('adminCompanies.tableHeaders.company')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">{t('adminCompanies.tableHeaders.description')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">{t('adminCompanies.tableHeaders.website')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">{t('adminCompanies.tableHeaders.created')}</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700">{t('adminCompanies.tableHeaders.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -215,13 +217,13 @@ export default function AdminManageCompanies() {
                         )}
                         <div>
                           <h3 className="font-semibold text-slate-800">{company.name}</h3>
-                          <p className="text-sm text-slate-500">ID: {company.id}</p>
+                          <p className="text-sm text-slate-500">{t('common.id')}: {company.id}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <p className="text-sm text-slate-600 line-clamp-2 max-w-xs">
-                        {company.description || "No description"}
+                        {company.description || t('common.noDescription')}
                       </p>
                     </td>
                     <td className="px-6 py-4">
@@ -232,10 +234,10 @@ export default function AdminManageCompanies() {
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:text-blue-700 text-sm underline"
                         >
-                          Visit Website
+                          {t('common.visitWebsite')}
                         </a>
                       ) : (
-                        <span className="text-slate-400 text-sm">No website</span>
+                        <span className="text-slate-400 text-sm">{t('common.noWebsite')}</span>
                       )}
                     </td>
                     <td className="px-6 py-4">
@@ -254,7 +256,7 @@ export default function AdminManageCompanies() {
                               : 'text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300'
                           }`}
                         >
-                          {company.deleting ? 'Deleting...' : 'Delete'}
+                          {company.deleting ? t('common.deleting') : t('common.delete')}
                         </button>
                       </div>
                     </td>
@@ -268,7 +270,7 @@ export default function AdminManageCompanies() {
 
       <div className="mt-8 text-center">
         <p className="text-slate-500 text-sm">
-          Total companies: {companies.length}
+          {t('adminCompanies.totalCompanies', { count: companies.length })}
         </p>
       </div>
     </div>

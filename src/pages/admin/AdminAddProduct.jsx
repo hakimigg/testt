@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { supabaseHelpers } from "../../lib/supabase";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "../../utils";
+import { useTranslation } from 'react-i18next';
 
 export default function AdminAddProduct() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [product, setProduct] = useState({ name: "", description: "", company: "nokia", price: 0 });
   const [photos, setPhotos] = useState([]);
@@ -30,27 +32,24 @@ export default function AdminAddProduct() {
         setIsLoadingCompanies(false);
       }
     };
-
     loadCompanies();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Basic validation
+        // Basic validation
     if (!product.name || !product.name.trim()) {
-      alert('Please enter a product name');
+      alert(t('adminAddProduct.validation.nameRequired'));
       return;
     }
     
     if (isNaN(Number(product.price)) || Number(product.price) < 0) {
-      alert('Please enter a valid price');
+      alert(t('adminAddProduct.validation.validPrice'));
       return;
     }
     
     setIsSubmitting(true);
     setSuccessMessage("");
-    
     try {
       const productToCreate = { 
         ...product, 
@@ -59,7 +58,7 @@ export default function AdminAddProduct() {
       };
       
       const newProduct = await supabaseHelpers.createProduct(productToCreate);
-      setSuccessMessage(`Product "${newProduct.name}" created successfully!`);
+      setSuccessMessage(t('adminAddProduct.success', { productName: newProduct.name }));
       setProduct({ name: "", description: "", company: "nokia", price: 0 });
       
       // Auto-redirect to dashboard after 2 seconds
@@ -68,7 +67,7 @@ export default function AdminAddProduct() {
       }, 2000);
     } catch (error) {
       console.error("Error creating product:", error);
-      alert(`Error creating product: ${error.message || 'Please try again.'}`);
+      alert(t('adminAddProduct.error', { error: error.message || t('common.tryAgain') }));
     } finally {
       setIsSubmitting(false);
     }
@@ -78,15 +77,15 @@ export default function AdminAddProduct() {
     <div className="max-w-4xl mx-auto px-4">
       <div className="mb-8">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
-          Add New Product
+          {t('adminAddProduct.title')}
         </h1>
-        <p className="text-lg text-slate-600">Add a new product to your inventory</p>
+        <p className="text-lg text-slate-600">{t('adminAddProduct.subtitle')}</p>
       </div>
 
       {successMessage && (
         <div className="mb-6 p-4 bg-green-100 border border-green-300 text-green-700 rounded-xl">
           <p className="font-semibold">{successMessage}</p>
-          <p className="text-sm">Redirecting to dashboard...</p>
+          <p className="text-sm">{t('adminAddProduct.redirecting')}</p>
         </div>
       )}
       
@@ -95,32 +94,32 @@ export default function AdminAddProduct() {
           {/* Left Column */}
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Product Name *</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">{t('adminAddProduct.productName')} *</label>
               <input 
                 type="text"
                 value={product.name} 
                 onChange={e => setProduct({ ...product, name: e.target.value })} 
                 required 
                 className="w-full p-4 border border-slate-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
-                placeholder="Enter product name"
+                placeholder={t('adminAddProduct.productNamePlaceholder')}
               />
             </div>
             
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">{t('adminAddProduct.description')}</label>
               <textarea 
                 value={product.description} 
                 onChange={e => setProduct({ ...product, description: e.target.value })} 
                 className="w-full p-4 border border-slate-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 min-h-[120px]"
-                placeholder="Describe your product"
+                placeholder={t('adminAddProduct.descriptionPlaceholder')}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Company *</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">{t('adminAddProduct.company')} *</label>
               {isLoadingCompanies ? (
                 <div className="w-full p-4 border border-slate-300 rounded-xl bg-slate-50 text-slate-500">
-                  Loading companies...
+                  {t('adminAddProduct.loadingCompanies')}...
                 </div>
               ) : (
                 <select
@@ -141,7 +140,7 @@ export default function AdminAddProduct() {
           {/* Right Column */}
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Price (da) *</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">{t('adminAddProduct.price')} *</label>
               <input 
                 type="number" 
                 value={product.price} 
@@ -156,23 +155,23 @@ export default function AdminAddProduct() {
 
             {/* Product Preview */}
             <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-6 border border-slate-200">
-              <h3 className="font-semibold text-slate-700 mb-4 text-center">Product Preview</h3>
+              <h3 className="font-semibold text-slate-700 mb-4 text-center">{t('adminAddProduct.preview')}</h3>
               <div className="bg-white rounded-lg p-4 border border-slate-200 shadow-sm">
                 <div className="mb-4">
                   <div className="w-full h-32 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold text-2xl">
-                      {product.name ? product.name.charAt(0).toUpperCase() : "P"}
+                      {product.name ? product.name.charAt(0).toUpperCase() : t('adminAddProduct.previewInitial')}
                     </span>
                   </div>
                 </div>
-                <h4 className="font-bold text-slate-800 text-center mb-2">{product.name || "Product Name"}</h4>
-                <p className="text-sm text-slate-600 text-center mb-3">{product.description || "Product description"}</p>
+                <h4 className="font-bold text-slate-800 text-center mb-2">{product.name || t('adminAddProduct.previewName')}</h4>
+                <p className="text-sm text-slate-600 text-center mb-3">{product.description || t('adminAddProduct.previewDescription')}</p>
                 <div className="flex justify-between items-center">
                   <span className="text-xs bg-slate-100 px-2 py-1 rounded-full text-slate-600">
                     {companies.find(c => c.id === product.company)?.name?.toUpperCase() || product.company.toUpperCase()}
                   </span>
                   <span className="font-bold text-purple-600">
-                    {product.price || "0.00"} da
+                    {product.price || "0.00"} {t('common.currency')}
                   </span>
                 </div>
               </div>
@@ -186,14 +185,14 @@ export default function AdminAddProduct() {
             onClick={() => navigate(createPageUrl("admin"))}
             className="px-6 py-3 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 transition-all duration-200 font-medium"
           >
-            Cancel
+            {t('common.cancel')}
           </button>
           <button 
             type="submit" 
             disabled={isSubmitting} 
             className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
           >
-            {isSubmitting ? "Creating Product..." : "Create Product"}
+            {isSubmitting ? t('adminAddProduct.creating') : t('adminAddProduct.createButton')}
           </button>
         </div>
       </form>

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { supabaseHelpers } from "../../lib/supabase";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../../utils";
+import { useTranslation } from 'react-i18next';
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalCompanies: 0,
@@ -40,35 +42,33 @@ export default function AdminDashboard() {
 
   const statCards = [
     {
-      title: "Total Products",
+      title: "admin.totalProducts",
       value: stats.totalProducts,
       color: "from-blue-500 to-blue-600",
       textColor: "text-blue-600"
     },
     {
-      title: "Companies",
+      title: "admin.companies",
       value: stats.totalCompanies,
       color: "from-green-500 to-green-600",
       textColor: "text-green-600"
     },
     {
-      title: "Recent Products",
+      title: "admin.recentProducts",
       value: stats.recentProducts.length,
       color: "from-purple-500 to-purple-600",
       textColor: "text-purple-600"
-    }
-  ];
-
+    }];
   return (
     <div className="max-w-7xl mx-auto px-4">
       <div className="mb-8">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
-          Admin Dashboard
+          {t('admin.dashboard')}
         </h1>
-        <p className="text-lg text-slate-600">Manage your Product Plaza</p>
+        <p className="text-lg text-slate-600">{t('admin.manageYourStore')}</p>
         {error && (
           <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-600">Error loading dashboard: {error}</p>
+            <p className="text-red-600">{t('admin.errorLoadingDashboard')} {error}</p>
           </div>
         )}
       </div>
@@ -79,10 +79,8 @@ export default function AdminDashboard() {
           <div key={index} className="bg-white rounded-xl p-6 shadow-lg border border-slate-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600 mb-1">{stat.title}</p>
-                <p className={`text-3xl font-bold ${stat.textColor}`}>
-                  {isLoading ? "..." : stat.value}
-                </p>
+                <h3 className="text-lg font-semibold mb-2">{t(stat.title)}</h3>
+                <p className="text-4xl font-bold">{isLoading ? "..." : stat.value}</p>
               </div>
               <div className={`w-12 h-12 bg-gradient-to-r ${stat.color} rounded-lg flex items-center justify-center`}>
                 <span className="text-white font-bold text-xl">
@@ -97,32 +95,32 @@ export default function AdminDashboard() {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         <div className="bg-white rounded-xl p-6 shadow-lg border border-slate-200">
-          <h2 className="text-2xl font-bold text-slate-800 mb-4">Quick Actions</h2>
+          <h2 className="text-2xl font-bold text-slate-800 mb-4">{t('admin.quickActions')}</h2>
           <div className="space-y-3">
             <Link
               to={createPageUrl("admin/add-product")}
               className="block w-full bg-gradient-to-r from-green-600 to-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:from-green-700 hover:to-blue-700 transition-all duration-200 text-center"
             >
-              Add New Product
+              {t('admin.addNewProduct')}
             </Link>
             <Link
               to={createPageUrl("admin/products")}
               className="block w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-4 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 text-center"
             >
-              Manage Products
+              {t('admin.manageProducts')}
             </Link>
             <Link
               to={createPageUrl("Products")}
               className="block w-full bg-gradient-to-r from-slate-600 to-slate-700 text-white font-semibold py-3 px-4 rounded-lg hover:from-slate-700 hover:to-slate-800 transition-all duration-200 text-center"
             >
-              View Public Site
+              {t('admin.viewPublicSite')}
             </Link>
           </div>
         </div>
 
         {/* Recent Products */}
         <div className="bg-white rounded-xl p-6 shadow-lg border border-slate-200">
-          <h2 className="text-2xl font-bold text-slate-800 mb-4">Recent Products</h2>
+          <h2 className="text-2xl font-bold text-slate-800 mb-4">{t('admin.recentProducts')}</h2>
           {isLoading ? (
             <div className="space-y-3">
               {Array(3).fill(0).map((_, i) => (
@@ -130,7 +128,7 @@ export default function AdminDashboard() {
               ))}
             </div>
           ) : stats.recentProducts.length === 0 ? (
-            <p className="text-slate-500 text-center py-8">No products yet</p>
+            <p className="text-slate-500 text-center py-8">{t('admin.noProductsYet')}</p>
           ) : (
             <div className="space-y-3">
               {stats.recentProducts.map((product) => (
@@ -140,8 +138,8 @@ export default function AdminDashboard() {
                     <p className="text-sm text-slate-600">{product.company.toUpperCase()}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-blue-600">{product.price} da</p>
-                    <p className="text-xs text-slate-500">{product.stock} in stock</p>
+                    <p className="font-bold text-blue-600">{product.price} {t('common.currency')}</p>
+                    <p className="text-xs text-slate-500">{product.stock} {t('admin.inStock')}</p>
                   </div>
                 </div>
               ))}

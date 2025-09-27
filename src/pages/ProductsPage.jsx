@@ -2,16 +2,17 @@ import React, { useState, useEffect } from "react";
 import { supabaseHelpers } from "../lib/supabase";
 import ProductCard from "../components/shared/ProductCard";
 import { useSearchParams } from "react-router-dom";
-
+import { useTranslation } from 'react-i18next';
 
 export default function ProductsPage() {
   const [searchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [companies, setCompanies] = useState([]);
-  const [companyData, setCompanyData] = useState([]); // Store full company objects for display names
+  const [companyData, setCompanyData] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [companyFilter, setCompanyFilter] = useState(searchParams.get("company") || "all");
+  const { t } = useTranslation();
 
   useEffect(() => {
     async function loadData() {
@@ -75,7 +76,7 @@ export default function ProductsPage() {
   }, []);
 
   useEffect(() => {
-    let filtered = products;
+    let filtered = [...products];
     if (companyFilter !== "all") {
       filtered = products.filter(p => p.company === companyFilter);
     }
@@ -85,24 +86,29 @@ export default function ProductsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="text-center mb-12">
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-4">All Products</h1>
-        <p className="text-lg text-slate-600">Discover our complete collection</p>
+        <h1 className="text-4xl font-bold text-center text-slate-800 mb-4">
+          {t('products.title')}
+        </h1>
+        <p className="text-xl text-slate-600 text-center mb-12">
+          {t('products.subtitle')}
+        </p>
       </div>
       
       <div className="flex flex-wrap gap-3 mb-12 justify-center">
         {companies.map(c => {
-          // Find the company data to get the proper display name
           const companyInfo = companyData.find(comp => comp.id === c);
-          const displayName = c === "all" ? "All Companies" : (companyInfo?.name || c.charAt(0).toUpperCase() + c.slice(1));
+          const displayName = c === "all" 
+            ? t('products.allCompanies') 
+            : (companyInfo?.name || c.charAt(0).toUpperCase() + c.slice(1));
           
           return (
             <button
               key={c}
               onClick={() => setCompanyFilter(c)}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+              className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg transform ${
                 companyFilter === c
-                  ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg transform scale-105"
-                  : "bg-white text-slate-700 border border-slate-200 hover:border-blue-300 hover:text-blue-600 hover:shadow-md hover:transform hover:scale-105"
+                  ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white scale-105"
+                  : "bg-gradient-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700 hover:scale-105 opacity-90 hover:opacity-100"
               }`}
             >
               {displayName}

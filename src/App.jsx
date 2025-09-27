@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import './i18n' // Import i18n configuration
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n' // Import i18n configuration
 import Layout from './Layout'
 import AdminLayout from './AdminLayout'
 import HomePage from './pages/HomePage'
@@ -31,22 +32,24 @@ function App() {
   console.log('Environment:', import.meta.env.PROD ? 'production' : 'development');
   
   return (
-    <Router basename={basename}>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Layout><HomePage /></Layout>} />
-        <Route path="/Home" element={<Layout><HomePage /></Layout>} />
-        <Route path="/Products" element={<Layout><ProductsPage /></Layout>} />
-        <Route path="/ProductDetail/:id" element={<Layout><ProductDetailPage /></Layout>} />
-        
-        {/* Admin Routes */}
-        <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
-        <Route path="/admin/add-product" element={<AdminLayout><AdminAddProduct /></AdminLayout>} />
-        <Route path="/admin/products" element={<AdminLayout><AdminProducts /></AdminLayout>} />
-        <Route path="/admin/add-company" element={<AdminLayout><AdminAddCompany /></AdminLayout>} />
-        <Route path="/admin/companies" element={<AdminLayout><AdminManageCompanies /></AdminLayout>} />
-      </Routes>
-    </Router>
+    <I18nextProvider i18n={i18n}>
+      <Router basename={basename}>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Layout><HomePage /></Layout>} />
+          <Route path="/Home" element={<Layout><HomePage /></Layout>} />
+          <Route path="/Products" element={<Layout><ProductsPage /></Layout>} />
+          <Route path="/ProductDetail/:id" element={<Layout><ProductDetailPage /></Layout>} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+          <Route path="/admin/add-product" element={<AdminLayout><AdminAddProduct /></AdminLayout>} />
+          <Route path="/admin/products" element={<AdminLayout><AdminProducts /></AdminLayout>} />
+          <Route path="/admin/add-company" element={<AdminLayout><AdminAddCompany /></AdminLayout>} />
+          <Route path="/admin/companies" element={<AdminLayout><AdminManageCompanies /></AdminLayout>} />
+        </Routes>
+      </Router>
+    </I18nextProvider>
   )
 }
 
