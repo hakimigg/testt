@@ -43,18 +43,7 @@ export default function ProductCard({ product }) {
             )}
           </div>
           
-          {/* Stock indicator */}
-          <div className="absolute bottom-3 left-3">
-            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-              product.stock > 10 
-                ? 'bg-green-100 text-green-700' 
-                : product.stock > 0 
-                  ? 'bg-amber-100 text-amber-700' 
-                  : 'bg-rose-100 text-rose-700'
-            }`}>
-              {product.stock > 10 ? 'In Stock' : product.stock > 0 ? 'Low Stock' : 'Out of Stock'}
-            </span>
-          </div>
+          {/* Stock indicator removed as we filter out out-of-stock products */}
         </div>
 
         {/* Product info */}
