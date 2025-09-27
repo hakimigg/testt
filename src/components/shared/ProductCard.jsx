@@ -69,7 +69,7 @@ export default function ProductCard({ product }) {
               </div>
             </div>
             
-            <h3 className="text-lg font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors duration-200 line-clamp-2">
+            <h3 className="text-lg font-bold text-slate-800 mb-2 group-hover:text-amber-600 transition-colors duration-200 line-clamp-2">
               {product.name}
             </h3>
             
@@ -79,7 +79,7 @@ export default function ProductCard({ product }) {
           </div>
           
           <button 
-            className="mt-auto w-full py-2.5 px-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg text-sm transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="mt-auto w-full py-2.5 px-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-medium rounded-lg text-sm transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2"
             onClick={(e) => e.preventDefault()}
           >
             View Details
