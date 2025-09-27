@@ -84,46 +84,75 @@ export default function ProductsPage() {
   }, [products, companyFilter]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-center text-slate-800 mb-4">
+    <div className="max-w-7xl mx-auto px-4 py-12 sm:py-16">
+      <div className="max-w-3xl mx-auto text-center mb-16">
+        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-600">
           {t('products.title')}
         </h1>
-        <p className="text-xl text-slate-600 text-center mb-12">
+        <p className="text-lg md:text-xl text-slate-600">
           {t('products.subtitle')}
         </p>
       </div>
       
-      <div className="flex flex-wrap gap-3 mb-12 justify-center">
-        {companies.map(c => {
-          const companyInfo = companyData.find(comp => comp.id === c);
-          const displayName = c === "all" 
-            ? t('products.allCompanies') 
-            : (companyInfo?.name || c.charAt(0).toUpperCase() + c.slice(1));
-          
-          return (
-            <button
-              key={c}
-              onClick={() => setCompanyFilter(c)}
-              className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg transform ${
-                companyFilter === c
-                  ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white scale-105"
-                  : "bg-gradient-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700 hover:scale-105 opacity-90 hover:opacity-100"
-              }`}
-            >
-              {displayName}
-            </button>
-          );
-        })}
+      {/* Company filter */}
+      <div className="mb-16">
+        <div className="flex flex-wrap justify-center gap-3 px-4 py-3 bg-white rounded-2xl shadow-sm border border-slate-100 max-w-4xl mx-auto">
+          {companies.map(c => {
+            const companyInfo = companyData.find(comp => comp.id === c);
+            const displayName = c === "all" 
+              ? t('products.allCompanies')
+              : (companyInfo?.name || c.charAt(0).toUpperCase() + c.slice(1));
+            
+            return (
+              <button
+                key={c}
+                onClick={() => setCompanyFilter(c)}
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  companyFilter === c
+                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md"
+                    : "text-slate-700 hover:bg-slate-100"
+                }`}
+              >
+                {displayName}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {isLoading
-          ? Array(8).fill(0).map((_, i) => (
-              <div key={i} className="border border-slate-200 rounded-xl p-6 h-80 bg-gradient-to-br from-slate-100 to-slate-200 animate-pulse"></div>
-            ))
-          : filteredProducts.map((product) => <ProductCard key={product.id} product={product} />)}
-      </div>
+      {/* Products grid */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {Array(8).fill(0).map((_, i) => (
+            <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+              <div className="pt-[100%] bg-slate-100 animate-pulse"></div>
+              <div className="p-5">
+                <div className="h-4 bg-slate-200 rounded w-3/4 mb-3"></div>
+                <div className="h-3 bg-slate-200 rounded w-1/2 mb-4"></div>
+                <div className="h-10 bg-blue-600 rounded-lg"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : filteredProducts.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-slate-100">
+          <div className="text-5xl mb-4">
+            <span role="img" aria-label="No products">📭</span>
+          </div>
+          <h3 className="text-xl font-semibold text-slate-800 mb-2">
+            No products found
+          </h3>
+          <p className="text-slate-500 max-w-md mx-auto">
+            We couldn't find any products matching your criteria. Try adjusting your filters.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
