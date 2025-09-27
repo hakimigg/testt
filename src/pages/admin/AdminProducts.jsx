@@ -135,9 +135,9 @@ export default function AdminProducts() {
           </div>
         ) : (
           filteredProducts.map(product => (
-            <div key={product.id} className="h-full">
-              <Link to={createPageUrl(`ProductDetail/${product.id}`)} className="block group h-full">
-                <div className="border border-slate-200 rounded-xl p-6 flex flex-col h-full bg-white hover:shadow-xl hover:border-blue-300 transition-all duration-300 group-hover:transform group-hover:scale-105">
+            <div key={product.id} className="relative group">
+              <Link to={createPageUrl(`ProductDetail/${product.id}`)} className="block">
+                <div className="border border-slate-200 rounded-xl p-6 h-full flex flex-col hover:shadow-xl hover:border-blue-300 transition-all duration-300 bg-white group-hover:transform group-hover:scale-105">
                   {/* Product Image */}
                   <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg flex-grow flex items-center justify-center mb-4 min-h-[120px] overflow-hidden">
                     {product.photos && product.photos.length > 0 ? (
@@ -154,50 +154,45 @@ export default function AdminProducts() {
                   </div>
                   
                   {/* Product Info */}
-                  <div className="flex-grow">
-                    <h3 className="text-lg font-bold text-slate-800 group-hover:text-blue-600 transition-colors duration-200 mb-2">{product.name}</h3>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-slate-600 text-sm font-medium bg-slate-100 px-3 py-1 rounded-full">
-                        {product.company?.toUpperCase() || 'N/A'}
-                      </span>
-                      <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
-                        {product.price} da
-                      </span>
-                    </div>
-                    <p className="text-sm text-slate-500 line-clamp-2 mb-4">
-                      {product.description}
-                    </p>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        product.stock > 10
-                          ? 'bg-green-100 text-green-700'
-                          : product.stock > 0
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : 'bg-red-100 text-red-700'
-                      }`}>
-                        {t('common.stock')}: {product.stock}
-                      </span>
-                    </div>
+                  <h3 className="text-lg font-bold text-slate-800 group-hover:text-blue-600 transition-colors duration-200">{product.name}</h3>
+                  <div className="flex items-center justify-between mt-3">
+                    <span className="text-slate-600 text-sm font-medium bg-slate-100 px-3 py-1 rounded-full">
+                      {product.company?.toUpperCase() || 'N/A'}
+                    </span>
+                    <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
+                      {product.price} da
+                    </span>
+                  </div>
+                  <p className="text-sm text-slate-500 mt-3 line-clamp-2 leading-relaxed">{product.description}</p>
+                  
+                  {/* Stock Indicator */}
+                  <div className="mt-3">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      product.stock > 10
+                        ? 'bg-green-100 text-green-700'
+                        : product.stock > 0
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-red-100 text-red-700'
+                    }`}>
+                      {t('common.stock')}: {product.stock}
+                    </span>
                   </div>
                 </div>
               </Link>
               
-              {/* Admin Actions */}
-              <div className="mt-2 flex justify-end">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleDelete(product.id);
-                  }}
-                  className="text-red-500 hover:text-red-700 text-sm font-medium flex items-center gap-1"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                  {t('common.delete')}
-                </button>
-              </div>
+              {/* Admin Delete Button */}
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleDelete(product.id);
+                }}
+                className="absolute -top-2 -right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 transition-colors duration-200 shadow-md hover:shadow-lg"
+                title={t('common.delete')}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
             </div>
           ))
         )}
