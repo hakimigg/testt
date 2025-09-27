@@ -77,9 +77,15 @@ export default function ProductsPage() {
 
   useEffect(() => {
     let filtered = [...products];
+    
+    // First filter by company if needed
     if (companyFilter !== "all") {
       filtered = products.filter(p => p.company === companyFilter);
     }
+    
+    // Then filter out out-of-stock products
+    filtered = filtered.filter(product => product.stock > 0);
+    
     setFilteredProducts(filtered);
   }, [products, companyFilter]);
 
@@ -146,10 +152,13 @@ export default function ProductsPage() {
             <span role="img" aria-label="No products">📭</span>
           </div>
           <h3 className="text-xl font-semibold text-slate-800 mb-2">
-            No products found
+            {products.length > 0 ? 'No available products' : 'No products found'}
           </h3>
           <p className="text-slate-500 max-w-md mx-auto">
-            We couldn't find any products matching your criteria. Try adjusting your filters.
+            {products.length > 0 
+              ? 'All products are currently out of stock. Please check back later.'
+              : 'We couldn\'t find any products matching your criteria. Try adjusting your filters.'
+            }
           </p>
         </div>
       )}
