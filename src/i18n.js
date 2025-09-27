@@ -20,6 +20,7 @@ const resources = {
       "common.submit": "Submit",
       "common.required": "Required",
       "common.optional": "Optional",
+      "common.stock": "Stock",
 
       // Home Page
       "home.title": "Welcome to Beta Website",
@@ -222,6 +223,7 @@ const resources = {
       "common.submit": "Soumettre",
       "common.required": "Obligatoire",
       "common.optional": "Optionnel",
+      "common.stock": "Stock",
 
       // Home Page
       "home.title": "Bienvenue sur Beta Website",

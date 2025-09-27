@@ -126,92 +126,79 @@ export default function AdminProducts() {
         </div>
       </div>
 
-      {/* Products Table */}
-      <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gradient-to-r from-slate-50 to-slate-100">
-              <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                  {t('adminProducts.tableHeaders.product')}
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                  {t('adminProducts.tableHeaders.company')}
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                  {t('adminProducts.tableHeaders.price')}
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                  {t('adminProducts.tableHeaders.stock')}
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">
-                  {t('adminProducts.tableHeaders.actions')}
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200">
-              {filteredProducts.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="px-6 py-12 text-center">
-                    <div className="text-slate-400 mb-2">📦</div>
-                    <p className="text-slate-500">{t('adminProducts.noProducts')}</p>
-                  </td>
-                </tr>
-              ) : (
-                filteredProducts.map(product => (
-                  <tr key={product.id} className="hover:bg-slate-50 transition-colors duration-200">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-                          {product.name?.charAt(0)?.toUpperCase() || 'P'}
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-slate-800">{product.name}</h3>
-                          <p className="text-sm text-slate-500 line-clamp-1">
-                            {product.description}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-slate-700">
-                      {product.company}
-                    </td>
-                    <td className="px-6 py-4 font-medium text-slate-800">
-                      ${product.price}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        product.stock > 10
-                          ? 'bg-green-100 text-green-700'
-                          : product.stock > 0
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : 'bg-red-100 text-red-700'
-                      }`}>
-                        {product.stock}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
-                        <Link
-                          to={createPageUrl(`ProductDetail/${product.id}`)}
-                          className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg text-sm font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-sm hover:shadow-md"
-                        >
-                          Details
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(product.id)}
-                          className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg text-sm font-medium hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-sm hover:shadow-md"
-                        >
-                          {t('common.delete')}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+      {/* Products Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredProducts.length === 0 ? (
+          <div className="col-span-full text-center py-12">
+            <div className="text-slate-400 text-4xl mb-4">📦</div>
+            <p className="text-slate-500 text-lg">{t('adminProducts.noProducts')}</p>
+          </div>
+        ) : (
+          filteredProducts.map(product => (
+            <div key={product.id} className="border border-slate-200 rounded-xl p-6 flex flex-col h-full bg-white hover:shadow-xl hover:border-blue-300 transition-all duration-300">
+              {/* Product Image */}
+              <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg flex-grow flex items-center justify-center mb-4 min-h-[120px] overflow-hidden">
+                {product.photos && product.photos.length > 0 ? (
+                  <img 
+                    src={product.photos[0]} 
+                    alt={product.name}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                ) : (
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                    <span className="text-white font-bold text-xl">{product.name?.charAt(0)?.toUpperCase() || 'P'}</span>
+                  </div>
+                )}
+              </div>
+              
+              {/* Product Info */}
+              <div className="flex-grow">
+                <h3 className="text-lg font-bold text-slate-800 mb-2">{product.name}</h3>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-slate-600 text-sm font-medium bg-slate-100 px-3 py-1 rounded-full">
+                    {product.company?.toUpperCase() || 'N/A'}
+                  </span>
+                  <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
+                    {product.price} da
+                  </span>
+                </div>
+                <p className="text-sm text-slate-500 line-clamp-2 mb-4">
+                  {product.description}
+                </p>
+                <div className="flex items-center justify-between mt-2">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    product.stock > 10
+                      ? 'bg-green-100 text-green-700'
+                      : product.stock > 0
+                        ? 'bg-yellow-100 text-yellow-700'
+                        : 'bg-red-100 text-red-700'
+                  }`}>
+                    {t('common.stock')}: {product.stock}
+                  </span>
+                </div>
+              </div>
+              
+              {/* Actions */}
+              <div className="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
+                <Link
+                  to={createPageUrl(`ProductDetail/${product.id}`)}
+                  className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg text-sm font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-sm hover:shadow-md"
+                >
+                  View Details
+                </Link>
+                <button
+                  onClick={() => handleDelete(product.id)}
+                  className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors duration-200"
+                  title="Delete Product"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Add Product Button */}
