@@ -158,6 +158,7 @@ const resources = {
       "adminProducts.loading": "Loading products...",
       "adminProducts.noProducts": "No products found",
       "adminProducts.filterByCompany": "Filter by Company",
+      "adminProducts.allCompanies": "All Companies",
       "adminProducts.showingResults": "Showing {{shown}} of {{total}} products",
       "adminProducts.tableHeaders": {
         "product": "Product",
@@ -360,6 +361,7 @@ const resources = {
       "adminProducts.loading": "Chargement des produits...",
       "adminProducts.noProducts": "Aucun produit trouvé",
       "adminProducts.filterByCompany": "Filtrer par entreprise",
+      "adminProducts.allCompanies": "Toutes les entreprises",
       "adminProducts.showingResults": "Affichage de {{shown}} sur {{total}} produits",
       "adminProducts.tableHeaders": {
         "product": "Produit",

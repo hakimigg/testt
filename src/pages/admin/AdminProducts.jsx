@@ -25,16 +25,44 @@ export default function AdminProducts() {
     loadProducts();
   }, []);
 
-  const companies = ["all", "c1", "c2", "c3", "c4"];
+  const [companies, setCompanies] = useState([{ id: 'all', name: t('adminProducts.allCompanies') }]);
+  
+  // Load companies from database
+  useEffect(() => {
+    async function loadCompanies() {
+      try {
+        const dbCompanies = await supabaseHelpers.getCompanies();
+        setCompanies([
+          { id: 'all', name: t('adminProducts.allCompanies') },
+          ...dbCompanies
+        ]);
+      } catch (error) {
+        console.error('Error loading companies:', error);
+      }
+    }
+    loadCompanies();
+  }, [t]);
   const filteredProducts = filter === "all"
     ? products
     : products.filter(p => p.company === filter);
+
+  // Refresh products from database
+  const refreshProducts = async () => {
+    try {
+      const fetchedProducts = await supabaseHelpers.getProducts();
+      setProducts(fetchedProducts);
+    } catch (err) {
+      console.error('Error refreshing products:', err);
+      setError(err);
+    }
+  };
 
   const handleDelete = async (productId) => {
     if (window.confirm(t('adminProducts.confirmDelete'))) {
       try {
         await supabaseHelpers.deleteProduct(productId);
-        setProducts(products.filter(p => p.id !== productId));
+        // Refresh the products list after deletion
+        await refreshProducts();
       } catch (error) {
         alert(t('adminProducts.deleteError'));
       }
@@ -74,23 +102,22 @@ export default function AdminProducts() {
 
       {/* Filter and Stats */}
       <div className="bg-white rounded-xl shadow-lg border border-slate-200 mb-8">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center gap-4">
             <span className="font-semibold text-slate-700">
               {t('adminProducts.filterByCompany')}:
             </span>
             <div className="flex gap-2 flex-wrap">
-              {companies.map(company => (
+              {companies.map((company) => (
                 <button
-                  key={company}
-                  onClick={() => setFilter(company)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                    filter === company
-                      ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
-                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  key={company.id}
+                  onClick={() => setFilter(company.id)}
+                  className={`px-4 py-2 rounded-lg transition-colors ${
+                    filter === company.id
+                      ? "bg-blue-600 text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-100"
                   }`}
                 >
-                  {company === "all" ? t('common.all') : company.toUpperCase()}
+                  {company.id === 'all' ? t('adminProducts.allCompanies') : company.name}
                 </button>
               ))}
             </div>
@@ -98,7 +125,6 @@ export default function AdminProducts() {
           <div className="text-sm text-slate-600">
             {t('adminProducts.showingResults', { shown: filteredProducts.length, total: products.length })}
           </div>
-        </div>
       </div>
 
       {/* Products Table */}
