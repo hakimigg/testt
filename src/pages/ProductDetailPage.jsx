@@ -150,6 +150,16 @@ export default function ProductDetailPage() {
           <div className="flex flex-wrap gap-2 mb-8">
             {product.tags?.map(tag => <div key={tag} className="bg-blue-100 text-blue-700 px-3 py-1 text-sm rounded-full font-medium">{tag}</div>)}
           </div>
+          
+          {product.stock > 0 ? (
+            <Button className="w-full py-6 text-lg font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2">
+              Add to Cart
+            </Button>
+          ) : (
+            <div className="w-full py-4 px-6 text-center bg-red-50 border border-red-200 text-red-700 font-medium rounded-lg">
+              Out of Stock
+            </div>
+          )}
         </div>
       </div>
     </div>
