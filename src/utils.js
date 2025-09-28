@@ -1,5 +1,10 @@
 // Utility functions for Product Plaza
 
+// Generate unique mock ID
+export function generateMockId() {
+  return `mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
+
 export function createPageUrl(page) {
   // Since Router has basename="/testt", we don't need to add it here
   // Simple page URL creator - in a real app this might be more complex

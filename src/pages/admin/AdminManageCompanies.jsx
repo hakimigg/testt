@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { createPageUrl } from "../../utils";
 import { supabaseHelpers } from "../../lib/supabase";
+import { Building2, Plus, Trash2, ExternalLink, AlertTriangle, CheckCircle, Loader } from "lucide-react";
 
 export default function AdminManageCompanies() {
   const { t } = useTranslation();
   const [companies, setCompanies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     loadCompanies();
@@ -57,8 +59,13 @@ export default function AdminManageCompanies() {
     }
   };
 
+  const showNotification = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
+
   const handleDelete = async (companyId, companyName) => {
-    if (!window.confirm(`Are you sure you want to delete "${companyName}"? This action cannot be undone.`)) {
+    if (!window.confirm(t('adminCompanies.confirmDelete', { companyName }))) {
       return;
     }
     
@@ -103,7 +110,7 @@ export default function AdminManageCompanies() {
       );
       
       // Show success message
-      alert(`✅ Company "${companyName}" has been successfully deleted!`);
+      showNotification(t('adminCompanies.deleted', { companyName }), 'success');
       console.log('🎉 Company successfully deleted and UI updated');
       
     } catch (error) {
@@ -113,7 +120,7 @@ export default function AdminManageCompanies() {
       setCompanies(originalCompanies);
       
       // Show error message
-      alert(`❌ Failed to delete "${companyName}": ${error.message || 'Unknown error occurred'}`);
+      showNotification(t('adminCompanies.deleteError', { companyName, error: error.message }), 'error');
       alert(`❌ Failed to delete "${companyName}": ${error.message || 'Unknown error occurred'}`);
       
       // Also reload to ensure UI is in sync
@@ -124,9 +131,9 @@ export default function AdminManageCompanies() {
 
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 animate-fadeInUp">
         <div className="text-center">
-          <div className="animate-pulse">
+          <div className="loading-skeleton">
             <div className="h-8 bg-slate-200 rounded w-64 mx-auto mb-4"></div>
             <div className="h-4 bg-slate-200 rounded w-48 mx-auto mb-8"></div>
             <div className="grid grid-cols-1 gap-4">
@@ -143,14 +150,15 @@ export default function AdminManageCompanies() {
   // Add error boundary for better error handling
   if (error) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 animate-fadeInUp">
         <div className="text-center">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-8 animate-scaleIn">
+            <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-red-800 mb-4">{t('adminCompanies.errorLoading')}</h2>
             <p className="text-red-600 mb-6">{error}</p>
             <button 
               onClick={loadCompanies}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 hover-lift"
             >
               {t('common.tryAgain')}
             </button>
@@ -162,23 +170,37 @@ export default function AdminManageCompanies() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* Notification */}
+      {notification && (
+        <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg animate-slideInRight ${
+          notification.type === 'success' ? 'bg-green-100 border border-green-300 text-green-700' : 'bg-red-100 border border-red-300 text-red-700'
+        }`}>
+          <div className="flex items-center">
+            {notification.type === 'success' ? <CheckCircle className="w-5 h-5 mr-2" /> : <AlertTriangle className="w-5 h-5 mr-2" />}
+            <p className="font-medium">{notification.message}</p>
+          </div>
+        </div>
+      )}
+      
       <div className="flex justify-between items-center mb-8">
-        <div>
+        <div className="animate-slideInLeft">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
             {t('adminCompanies.title')}
           </h1>
           <p className="text-lg text-slate-600">{t('adminCompanies.subtitle')}</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 animate-slideInRight">
           <button 
             onClick={() => testSupabaseConnection()}
-            className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+            className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover-lift flex items-center space-x-2"
           >
-            {t('adminCompanies.testConnection')}
+            <Loader className="w-4 h-4" />
+            <span>{t('adminCompanies.testConnection')}</span>
           </button>
           <Link to={createPageUrl("admin/add-company")}>
-            <button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200">
-              {t('adminCompanies.addNewCompany')}
+            <button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover-lift flex items-center space-x-2">
+              <Plus className="w-4 h-4" />
+              <span>{t('adminCompanies.addNewCompany')}</span>
             </button>
           </Link>
         </div>
@@ -186,20 +208,21 @@ export default function AdminManageCompanies() {
 
 
       {companies.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-3xl">C</span>
+        <div className="text-center py-12 animate-fadeInUp">
+          <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-custom">
+            <Building2 className="w-12 h-12 text-white" />
           </div>
           <h3 className="text-xl font-semibold text-slate-800 mb-2">{t('adminCompanies.noCompanies')}</h3>
           <p className="text-slate-600 mb-6">{t('adminCompanies.getStarted')}</p>
           <Link to={createPageUrl("admin/add-company")}>
-            <button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl">
-              {t('adminCompanies.addFirstCompany')}
+            <button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl hover-lift flex items-center space-x-2 mx-auto">
+              <Plus className="w-5 h-5" />
+              <span>{t('adminCompanies.addFirstCompany')}</span>
             </button>
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden animate-fadeInUp hover-lift">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gradient-to-r from-slate-50 to-slate-100">
@@ -212,8 +235,8 @@ export default function AdminManageCompanies() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
-                {companies.map((company) => (
-                  <tr key={company.id} className="hover:bg-slate-50 transition-colors duration-200">
+                {companies.map((company, index) => (
+                  <tr key={company.id} className="hover:bg-slate-50 transition-colors duration-200 animate-fadeInUp" style={{animationDelay: `${index * 0.1}s`}}>
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-3">
                         {company.logo ? (
@@ -223,7 +246,7 @@ export default function AdminManageCompanies() {
                             className="w-12 h-12 object-cover rounded-lg border-2 border-slate-200"
                           />
                         ) : (
-                          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center animate-scaleIn">
                             <span className="text-white font-bold text-lg">
                               {company.name.charAt(0).toUpperCase()}
                             </span>
@@ -246,9 +269,10 @@ export default function AdminManageCompanies() {
                           href={company.website} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-700 text-sm underline"
+                          className="text-blue-600 hover:text-blue-700 text-sm underline flex items-center space-x-1 hover:space-x-2 transition-all duration-200"
                         >
-                          {t('common.visitWebsite')}
+                          <span>{t('common.visitWebsite')}</span>
+                          <ExternalLink className="w-3 h-3" />
                         </a>
                       ) : (
                         <span className="text-slate-400 text-sm">{t('common.noWebsite')}</span>
@@ -264,27 +288,25 @@ export default function AdminManageCompanies() {
                         <button
                           onClick={() => handleDelete(company.id, company.name)}
                           disabled={company.isDeleting}
-                          className={`px-3 py-1 text-sm rounded border transition-all duration-200 ${
+                          className={`px-3 py-1 text-sm rounded border transition-all duration-200 flex items-center space-x-1 ${
                             company.isDeleting 
                               ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                              : 'text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 hover:text-red-700'
+                              : 'text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 hover:text-red-700 hover-lift'
                           }`}
                         >
                           {company.isDeleting ? (
-                            <span className="flex items-center">
+                            <>
                               <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                               </svg>
-                              {t('common.deleting')}
-                            </span>
+                              <span>{t('common.deleting')}</span>
+                            </>
                           ) : (
-                            <span className="flex items-center">
-                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                              {t('common.delete')}
-                            </span>
+                            <>
+                              <Trash2 className="w-4 h-4" />
+                              <span>{t('common.delete')}</span>
+                            </>
                           )}
                         </button>
                       </div>
@@ -297,7 +319,7 @@ export default function AdminManageCompanies() {
         </div>
       )}
 
-      <div className="mt-8 text-center">
+      <div className="mt-8 text-center animate-fadeInUp">
         <p className="text-slate-500 text-sm">
           {t('adminCompanies.totalCompanies', { count: companies.length })}
         </p>

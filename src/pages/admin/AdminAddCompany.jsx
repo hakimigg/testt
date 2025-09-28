@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "../../utils";
 import { supabaseHelpers } from "../../lib/supabase";
 import { useTranslation } from "react-i18next";
+import { Building2, FileText, Upload, X, Check, Globe } from "lucide-react";
 
 export default function AdminAddCompany() {
   const { t } = useTranslation();
@@ -17,6 +18,7 @@ export default function AdminAddCompany() {
   const [error, setError] = useState("");
   const [logoPreview, setLogoPreview] = useState(null);
   const [logoFile, setLogoFile] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
@@ -55,17 +57,27 @@ export default function AdminAddCompany() {
     if (fileInput) fileInput.value = '';
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!company.name || !company.name.trim()) {
+      newErrors.name = t('adminAddCompany.errors.nameRequired');
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Basic validation
-    if (!company.name || !company.name.trim()) {
-      setError(t('adminAddCompany.errors.nameRequired'));
+    if (!validateForm()) {
       return;
     }
     
     setIsSubmitting(true);
     setError("");
+    setErrors({});
     
     try {
       const newCompany = await supabaseHelpers.createCompany(company);
@@ -92,34 +104,43 @@ export default function AdminAddCompany() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="text-center mb-12">
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
+        <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4 animate-fadeInUp">
           {t('adminAddCompany.title')}
         </h1>
-        <p className="text-lg text-slate-600">{t('adminAddCompany.subtitle')}</p>
+        <p className="text-lg text-slate-600 animate-slideInLeft">{t('adminAddCompany.subtitle')}</p>
       </div>
 
       {successMessage && (
-        <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-green-600 font-medium">{successMessage}</p>
+        <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg animate-scaleIn success-checkmark">
+          <div className="flex items-center">
+            <Check className="w-5 h-5 text-green-600 mr-2" />
+            <p className="text-green-600 font-medium">{successMessage}</p>
+          </div>
         </div>
       )}
 
       {error && (
-        <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-600 font-medium">{error}</p>
+        <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg animate-scaleIn">
+          <div className="flex items-center">
+            <X className="w-5 h-5 text-red-600 mr-2" />
+            <p className="text-red-600 font-medium">{error}</p>
+          </div>
         </div>
       )}
 
       <div className="grid md:grid-cols-2 gap-12">
         {/* Form */}
-        <div>
+        <div className="animate-slideInLeft">
           <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 border border-slate-200 rounded-2xl shadow-lg">
             {/* Company Logo */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">{t('adminAddCompany.logo')}</label>
+              <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                <Upload className="w-4 h-4 mr-2 text-purple-600" />
+                {t('adminAddCompany.logo')}
+              </label>
               <div className="space-y-4">
                 {/* File Upload Area */}
-                <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-purple-400 transition-colors duration-200">
+                <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-purple-400 transition-colors duration-200 hover-lift">
                   <input
                     type="file"
                     accept="image/*"
@@ -129,7 +150,7 @@ export default function AdminAddCompany() {
                   />
                   <label htmlFor="logo-upload" className="cursor-pointer">
                     <div className="flex flex-col items-center space-y-2">
-                      <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-8 h-8 text-slate-400 animate-bounce-custom" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                       </svg>
                       <div className="text-center">
@@ -146,16 +167,14 @@ export default function AdminAddCompany() {
                     <img 
                       src={logoPreview} 
                       alt={t('adminAddCompany.form.logoPreview')}
-                      className="w-full h-32 object-cover rounded-lg border border-slate-200"
+                      className="w-full h-32 object-cover rounded-lg border border-slate-200 animate-scaleIn"
                     />
                     <button
                       type="button"
                       onClick={removePhoto}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors duration-200"
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors duration-200 hover-lift"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
+                      <X className="w-4 h-4" />
                     </button>
                   </div>
                 )}
@@ -164,20 +183,29 @@ export default function AdminAddCompany() {
 
             {/* Company Name */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">{t('adminAddCompany.companyName')} *</label>
+              <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                <Building2 className="w-4 h-4 mr-2 text-purple-600" />
+                {t('adminAddCompany.companyName')} *
+              </label>
               <input 
                 type="text"
                 value={company.name} 
                 onChange={e => setCompany({ ...company, name: e.target.value })} 
                 required 
-                className="w-full p-4 border border-slate-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+                className={`w-full p-4 border rounded-xl focus:ring-2 transition-all duration-200 ${
+                  errors.name ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : 'border-slate-300 focus:border-purple-500 focus:ring-purple-200'
+                }`}
                 placeholder={t('adminAddCompany.companyNamePlaceholder')}
               />
+              {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">{t('adminAddCompany.description')}</label>
+              <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                <FileText className="w-4 h-4 mr-2 text-purple-600" />
+                {t('adminAddCompany.description')}
+              </label>
               <textarea 
                 value={company.description} 
                 onChange={e => setCompany({ ...company, description: e.target.value })} 
@@ -186,32 +214,57 @@ export default function AdminAddCompany() {
               />
             </div>
 
+            {/* Website */}
+            <div>
+              <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                <Globe className="w-4 h-4 mr-2 text-purple-600" />
+                Website
+              </label>
+              <input 
+                type="url"
+                value={company.website || ''} 
+                onChange={e => setCompany({ ...company, website: e.target.value })} 
+                className="w-full p-4 border border-slate-300 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+                placeholder="https://example.com"
+              />
+            </div>
+
             {/* Submit Button */}
             <button 
               type="submit" 
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 flex items-center justify-center space-x-2 group hover-lift"
             >
-              {isSubmitting ? t('adminAddCompany.creating') : t('adminAddCompany.submit')}
+              {isSubmitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <span>{t('adminAddCompany.creating')}</span>
+                </>
+              ) : (
+                <>
+                  <Building2 className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                  <span>{t('adminAddCompany.submit')}</span>
+                </>
+              )}
             </button>
           </form>
         </div>
 
         {/* Preview */}
-        <div>
-          <div className="bg-white p-8 border border-slate-200 rounded-2xl shadow-lg">
+        <div className="animate-slideInRight">
+          <div className="bg-white p-8 border border-slate-200 rounded-2xl shadow-lg hover-lift">
             <h3 className="text-xl font-bold text-slate-800 mb-6">{t('adminAddCompany.preview')}</h3>
-            <div className="border border-slate-200 rounded-xl p-6 bg-gradient-to-br from-slate-50 to-white">
+            <div className="border border-slate-200 rounded-xl p-6 bg-gradient-to-br from-slate-50 to-white hover:shadow-md transition-all duration-300">
               {/* Logo Preview */}
               <div className="mb-4 flex justify-center">
                 {logoPreview ? (
                     <img 
                     src={logoPreview} 
                     alt={t('adminAddCompany.form.companyLogoPreview')}
-                    className="w-20 h-20 object-cover rounded-lg border-2 border-slate-200"
+                    className="w-20 h-20 object-cover rounded-lg border-2 border-slate-200 animate-scaleIn"
                   />
                 ) : (
-                  <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                  <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center animate-scaleIn">
                     <span className="text-white font-bold text-2xl">
                       {company.name ? company.name.charAt(0).toUpperCase() : t('adminAddCompany.previewDefault.initial')}
                     </span>
@@ -225,6 +278,14 @@ export default function AdminAddCompany() {
               <p className="text-sm text-slate-600 text-center mb-3">
                 {company.description || t('adminAddCompany.previewDefault.description')}
               </p>
+              {company.website && (
+                <div className="text-center">
+                  <a href={company.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 text-sm flex items-center justify-center space-x-1">
+                    <Globe className="w-4 h-4" />
+                    <span>Visit Website</span>
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -377,6 +377,7 @@ const resources = {
       "adminProducts.addNewProduct": "Ajouter un nouveau produit",
 
       // Admin Add Product
+      // Admin Add Product
       "adminAddProduct.title": "Ajouter un Nouveau Produit",
       "adminAddProduct.subtitle": "Ajoutez un nouveau produit à votre inventaire",
       "adminAddProduct.productName": "Nom du Produit",
@@ -399,6 +400,9 @@ const resources = {
         "nameRequired": "Veuillez entrer un nom de produit",
         "validPrice": "Veuillez entrer un prix valide"
       },
+
+      // Common
+      "common.currency": "da",
 
       // Error Messages
       "error.generic": "Une erreur s'est produite. Veuillez réessayer.",
